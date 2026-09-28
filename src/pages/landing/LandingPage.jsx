@@ -6,6 +6,7 @@ import Chapters from "../../sections/landing/Chapters";
 import FeaturedQuote from "../../sections/landing/FeaturedQuote";
 import Hero from "../../sections/landing/Hero";
 import Methodology from "../../sections/landing/Methodology";
+import Gallery from "../../sections/landing/Gallery";
 import AboutCta from "../../sections/about/AboutCta";
 import AboutResearch from "../../sections/about/AboutResearch";
 
@@ -36,6 +37,8 @@ export default function LandingPage() {
       {/* <Methodology /> */}
 
       <AboutResearch />
+
+      <Gallery />
 
       <AboutCta />
 

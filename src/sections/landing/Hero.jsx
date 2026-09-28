@@ -41,23 +41,25 @@ export default function Hero() {
           </span>
         </h1>
         <p
-          className={`text-xl md:text-2xl text-primary-white/80 max-w-2xl leading-relaxed mb-12 font-light transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          className={`text-xl md:text-2xl text-primary-white/80 max-w-2xl leading-relaxed mb-12 font-normal transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: heroLoaded ? "200ms" : "0ms" }}
         >
-          World-class technical training programs in welding, fabrication, and skilled trades for industry-ready professionals.
+          World-class technical training programs in welding, fabrication, and
+          skilled trades for industry-ready professionals.
         </p>
-        <div className={`flex flex-wrap gap-4 transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        <div
+          className={`flex flex-wrap gap-4 transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: heroLoaded ? "300ms" : "0ms" }}
         >
           <a
             href="#products"
-            className="inline-flex items-center gap-2 text-sm font-medium bg-primary-orange text-primary-white px-6 py-3 rounded-full hover:bg-primary-black dark:hover:bg-primary-white dark:hover:text-primary-black transition-all duration-700"
+            className="inline-flex items-center gap-2 text-sm font-medium bg-primary-orange text-primary-white px-8 py-4 rounded-full hover:bg-primary-black dark:hover:bg-primary-white dark:hover:text-primary-black transition-all duration-700"
           >
             Explore trades <ArrowDown size={16} />
           </a>
           <a
             href="#teams"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary-white hover:text-primary-orange transition-all duration-700 border border-primary-white/30 px-6 py-3 rounded-full hover:border-primary-orange"
+            className="inline-flex items-center gap-2 text-sm font-medium text-primary-white hover:text-primary-orange transition-all duration-700 border border-primary-white/30 px-8 py-4 rounded-full hover:border-primary-orange"
           >
             View programs
           </a>
