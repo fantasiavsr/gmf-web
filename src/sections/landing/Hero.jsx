@@ -9,6 +9,12 @@ export default function Hero() {
     return () => clearTimeout(timer);
   }, []);
 
+  // HERO BACKGROUND OPTIONS:
+  // Uncomment the option you want to use and comment the other one
+
+  // ===== OPTION 1: IMAGE BACKGROUND (CURRENTLY ACTIVE) =====
+  // Uncomment the section below to use the image as hero background
+  /*
   return (
     <section
       id="report"
@@ -20,6 +26,28 @@ export default function Hero() {
         backgroundAttachment: "fixed",
       }}
     >
+  */
+
+  // ===== OPTION 2: VIDEO BACKGROUND =====
+  // Uncomment the section below to use the video as hero background
+  return (
+    <section
+      id="report"
+      className="relative min-h-screen pt-36 pb-20 px-8 md:px-16 overflow-hidden"
+    >
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/hero.mp4" type="video/mp4" />
+        {/* Fallback image if video doesn't load */}
+        <img src="/herobg.jpg" alt="Hero Background" className="w-full h-full object-cover" />
+      </video>
+
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-primary-black/40 dark:bg-primary-black/60 z-0"></div>
 
@@ -67,4 +95,25 @@ export default function Hero() {
       </div>
     </section>
   );
+
+  /* ===== SWITCH INSTRUCTIONS =====
+   *
+   * TO USE IMAGE BACKGROUND:
+   * 1. Comment out lines 27-49 (the return statement with VIDEO BACKGROUND)
+   * 2. Uncomment lines 16-24 (the return statement with IMAGE BACKGROUND)
+   * 3. Make sure the closing </section> tag at line 72 is properly aligned
+   *
+   * TO USE VIDEO BACKGROUND (CURRENT):
+   * 1. Comment out the IMAGE BACKGROUND section (lines 16-24)
+   * 2. Keep the VIDEO BACKGROUND section active (lines 27-49)
+   *
+   * VIDEO FEATURES:
+   * - Autoplay: video starts playing automatically
+   * - Muted: required for autoplay on most browsers
+   * - Loop: video loops continuously
+   * - PlaysInline: works on mobile devices
+   * - Fallback: shows image if video fails to load
+   * - Same overlay for text readability
+   * - Same animations as image version
+   */
 }
