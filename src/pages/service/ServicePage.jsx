@@ -33,7 +33,19 @@ export default function ServicePage() {
 
       {/* Hero */}
       <section className="pt-36 pb-20 px-8 md:px-16 md:max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          {/* Mobile - Hero image (shows at top) */}
+          <div
+            className={`md:hidden transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+            style={{ transitionDelay: heroLoaded ? "100ms" : "0ms" }}
+          >
+            <img
+              src="/services.jpg"
+              alt="Professional Training Services"
+              className="w-full h-full object-cover rounded-2xl border border-primary-black/10 dark:border-primary-white/10 shadow-lg"
+            />
+          </div>
+
           {/* Left side - Text content */}
           <div>
             <p
@@ -60,7 +72,7 @@ export default function ServicePage() {
             </p>
           </div>
 
-          {/* Right side - Hero image */}
+          {/* Desktop - Hero image (shows on right) */}
           <div
             className={`hidden md:block transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
             style={{ transitionDelay: heroLoaded ? "300ms" : "0ms" }}

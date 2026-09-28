@@ -70,7 +70,7 @@ export default function Gallery2() {
               alt={item.alt}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary-black/80 via-primary-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-primary-black/80 via-primary-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
               <h4 className="text-primary-white font-bold text-lg mb-2">
                 {item.title}

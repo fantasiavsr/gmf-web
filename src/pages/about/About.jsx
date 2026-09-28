@@ -17,8 +17,8 @@ export default function About() {
       <AboutStory />
       <AboutFocus />
       <AboutVision />
-      <AboutResearch />
-      <AboutCta />
+      {/* <AboutResearch />
+      <AboutCta /> */}
 
       <Footer page="landing" />
     </main>
