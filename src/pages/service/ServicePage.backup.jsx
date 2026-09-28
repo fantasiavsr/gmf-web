@@ -33,45 +33,28 @@ export default function ServicePage() {
 
       {/* Hero */}
       <section className="pt-36 pb-20 px-8 md:px-16 md:max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          {/* Left side - Text content */}
-          <div>
-            <p
-              className={`text-xs uppercase tracking-[0.2em] text-primary-black/50 dark:text-primary-white/50 mb-6 transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-            >
-              Training Programs
-            </p>
-            <h1
-              className={`text-5xl md:text-7xl font-bold tracking-tighter leading-[0.88] mb-8 text-primary-black dark:text-primary-white transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-              style={{ transitionDelay: heroLoaded ? "100ms" : "0ms" }}
-            >
-              Professional
-              <br />
-              <span className="italic font-normal text-primary-orange">
-                Training Services.
-              </span>
-            </h1>
-            <p
-              className={`text-xl md:text-2xl text-primary-black/60 dark:text-primary-white/60 max-w-2xl leading-relaxed font-light transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-              style={{ transitionDelay: heroLoaded ? "200ms" : "0ms" }}
-            >
-              Comprehensive technical training programs including welding
-              qualifications, pipe fitting, blaster coating, and grinder operations.
-            </p>
-          </div>
-
-          {/* Right side - Hero image */}
-          <div
-            className={`hidden md:block transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-            style={{ transitionDelay: heroLoaded ? "300ms" : "0ms" }}
-          >
-            <img
-              src="/services.jpg"
-              alt="Professional Training Services"
-              className="w-full h-full object-cover rounded-2xl border border-primary-black/10 dark:border-primary-white/10 shadow-lg"
-            />
-          </div>
-        </div>
+        <p
+          className={`text-xs uppercase tracking-[0.2em] text-primary-black/50 dark:text-primary-white/50 mb-6 transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        >
+          Training Programs
+        </p>
+        <h1
+          className={`text-5xl md:text-8xl font-bold tracking-tighter leading-[0.88] mb-8 text-primary-black dark:text-primary-white transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          style={{ transitionDelay: heroLoaded ? "100ms" : "0ms" }}
+        >
+          Professional
+          <br />
+          <span className="italic font-normal text-primary-orange">
+            Training Services.
+          </span>
+        </h1>
+        <p
+          className={`text-xl md:text-2xl text-primary-black/60 dark:text-primary-white/60 max-w-2xl leading-relaxed font-light transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          style={{ transitionDelay: heroLoaded ? "200ms" : "0ms" }}
+        >
+          Comprehensive technical training programs including welding
+          qualifications, pipe fitting, blaster coating, and grinder operations.
+        </p>
       </section>
 
       {/* Sections with scroll animations */}
