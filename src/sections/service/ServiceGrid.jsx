@@ -3,39 +3,39 @@ import { Check } from "lucide-react";
 export default function ServiceGrid() {
   const services = [
     {
-      name: "Design Services",
+      name: "Welding",
       items: [
-        "UI/UX Design",
-        "Visual Design",
-        "Design Systems",
-        "Motion Design",
+        "GTAW Welding Process",
+        "SMAW Welding Process",
+        "FCAW Welding Process",
+        "GMAW Welding Process",
       ],
     },
     {
-      name: "Development",
+      name: "Pipe Fitter",
       items: [
-        "Frontend Development",
-        "Backend Development",
-        "Full-Stack",
-        "DevOps",
+        "Pipe Assembly",
+        "Welding Procedures",
+        "Pressure Testing",
+        "Industry Standards",
       ],
     },
     {
-      name: "Strategy & Planning",
+      name: "Blaster & Coating",
       items: [
-        "Business Strategy",
-        "Product Strategy",
-        "Market Research",
-        "Roadmap Planning",
+        "Surface Preparation",
+        "Blasting Techniques",
+        "Coating Application",
+        "Quality Assurance",
       ],
     },
     {
-      name: "Support & Maintenance",
+      name: "Grinder Operations",
       items: [
-        "Technical Support",
-        "Performance Optimization",
-        "Security Updates",
-        "24/7 Monitoring",
+        "Safety Procedures",
+        "Grinding Techniques",
+        "Equipment Maintenance",
+        "Finishing Standards",
       ],
     },
   ];

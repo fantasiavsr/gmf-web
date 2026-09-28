@@ -29,31 +29,30 @@ export default function ServicePage() {
 
   return (
     <main className="min-h-screen bg-primary-white dark:bg-primary-dark-bg text-primary-black dark:text-primary-white font-sans selection:bg-primary-orange selection:text-primary-white transition-colors">
-      <Navbar title="Service Layouts" links={data.NavLinks} />
+      <Navbar title="GMF Training Center" links={data.NavLinks} />
 
       {/* Hero */}
       <section className="pt-36 pb-20 px-8 md:px-16 md:max-w-7xl mx-auto">
         <p
           className={`text-xs uppercase tracking-[0.2em] text-primary-black/50 dark:text-primary-white/50 mb-6 transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
-          Layout Patterns
+          Training Programs
         </p>
         <h1
           className={`text-5xl md:text-8xl font-bold tracking-tighter leading-[0.88] mb-8 text-primary-black dark:text-primary-white transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: heroLoaded ? "100ms" : "0ms" }}
         >
-          Services
+          Professional
           <br />
           <span className="italic font-normal text-primary-orange">
-            Showcase.
+            Training Services.
           </span>
         </h1>
         <p
           className={`text-xl md:text-2xl text-primary-black/60 dark:text-primary-white/60 max-w-2xl leading-relaxed font-light transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: heroLoaded ? "200ms" : "0ms" }}
         >
-          Seven service layout patterns for every business type—from cards to
-          accordions, grids to packages.
+          Comprehensive technical training programs including welding qualifications, pipe fitting, blaster coating, and grinder operations.
         </p>
       </section>
 

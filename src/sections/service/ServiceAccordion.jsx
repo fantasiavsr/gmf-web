@@ -6,28 +6,28 @@ export default function ServiceAccordion() {
 
   const services = [
     {
-      name: "Web Development",
-      desc: "Full-stack web applications built with modern technologies",
+      name: "Welding",
+      desc: "Highly sought-after program for basic and experienced welders seeking international certification",
       details:
-        "We build responsive, scalable web applications using React, Vue, Node.js, and databases like PostgreSQL. Includes hosting setup, maintenance, and ongoing support.",
+        "Comprehensive welding training program designed for both beginners and experienced welders. Covers GTAW, SMAW, FCAW, and GMAW processes with hands-on practice using 35 permanent booths and 50 advanced welding machines. Participants receive internationally recognized certifications upon successful completion.",
     },
     {
-      name: "Mobile App Development",
-      desc: "Native and cross-platform mobile applications",
+      name: "Pipe Fitter",
+      desc: "Creating skilled professionals for industry demands in the Batam region",
       details:
-        "iOS and Android app development using Swift, Kotlin, React Native, or Flutter. App store deployment, user analytics, and post-launch support included.",
+        "Specialized training program creating reliable skilled workers for the industrial needs of Batam and surrounding regions. Covers pipe assembly, welding procedures, pressure testing, and adherence to international industry standards. Graduates are ready for immediate employment in construction and maintenance sectors.",
     },
     {
-      name: "E-commerce Solutions",
-      desc: "Complete online store setup and optimization",
+      name: "Blaster & Coating",
+      desc: "Supporting industry with recognized and valued professional skills",
       details:
-        "Shopify, WooCommerce, or custom e-commerce platforms. Payment integration, inventory management, shipping setup, and conversion optimization.",
+        "Comprehensive industrial coating and blasting program recognized by major industries in Batam. Participants develop expertise in surface preparation, blasting techniques, and coating application. Program participants gain industry-recognized skills that are highly valued in the manufacturing and construction sectors.",
     },
     {
-      name: "API & Backend Services",
-      desc: "Robust server-side infrastructure and integrations",
+      name: "Grinder Operations",
+      desc: "Basic training program for industrial and business applications in Batam",
       details:
-        "RESTful and GraphQL APIs, microservices architecture, third-party integrations, database design, and deployment on AWS, GCP, or Azure.",
+        "Foundational grinder operation training designed for industrial and business applications. Covers safety procedures, grinding techniques, equipment maintenance, and finishing standards. Program equips participants with practical skills needed for immediate job placement in manufacturing facilities.",
     },
   ];
 

@@ -61,8 +61,8 @@ function App() {
             {/* Public pages */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<About />} />
-            <Route path="/products" element={<ProductPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
+            {/* <Route path="/products" element={<ProductPage />} /> */}
+            {/* <Route path="/pricing" element={<PricingPage />} /> */}
             <Route path="/services" element={<ServicePage />} />
 
             {/* Admin Dashboard - Only accessible to admin role */}
