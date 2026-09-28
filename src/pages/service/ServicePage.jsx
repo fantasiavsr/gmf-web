@@ -52,7 +52,8 @@ export default function ServicePage() {
           className={`text-xl md:text-2xl text-primary-black/60 dark:text-primary-white/60 max-w-2xl leading-relaxed font-light transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: heroLoaded ? "200ms" : "0ms" }}
         >
-          Comprehensive technical training programs including welding qualifications, pipe fitting, blaster coating, and grinder operations.
+          Comprehensive technical training programs including welding
+          qualifications, pipe fitting, blaster coating, and grinder operations.
         </p>
       </section>
 
@@ -64,26 +65,26 @@ export default function ServicePage() {
         <ServiceCards />
       </div>
 
-      <div
+      {/* <div
         ref={section2Ref}
         className={`bg-primary-black/4 dark:bg-primary-white/6 transition-all duration-700 ${section2Visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       >
         <ServiceList />
-      </div>
+      </div> */}
 
       <div
         ref={section3Ref}
-        className={`transition-all duration-700 ${section3Visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        className={`bg-primary-black/4 dark:bg-primary-white/6 transition-all duration-700 ${section3Visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       >
         <ServiceAccordion />
       </div>
 
-      <div
+      {/* <div
         ref={section4Ref}
         className={`bg-primary-black/4 dark:bg-primary-white/6 transition-all duration-700 ${section4Visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       >
         <ServiceShowcase />
-      </div>
+      </div> */}
 
       <div
         ref={section5Ref}
@@ -99,12 +100,12 @@ export default function ServicePage() {
         <ServiceDetailList />
       </div>
 
-      <div
+      {/* <div
         ref={section7Ref}
         className={`transition-all duration-700 ${section7Visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       >
         <ServicePackageCards />
-      </div>
+      </div> */}
 
       {/* Footer */}
       <Footer page="service" />
