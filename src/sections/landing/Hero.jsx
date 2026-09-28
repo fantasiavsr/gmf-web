@@ -36,7 +36,7 @@ export default function Hero() {
         >
           Quality Technical
           <br />
-          <span className="italic font-normal text-primary-orange">
+          <span className="italic font-medium text-primary-orange">
             Training Excellence
           </span>
         </h1>

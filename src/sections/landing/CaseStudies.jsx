@@ -39,7 +39,7 @@ export default function CaseStudies() {
           { co: "Welding (GMAW)", ready: true },
           { co: "Pipe Fitting", ready: true },
           { co: "Fabrication", ready: true },
-          { co: "Blaster Painter", ready: true },
+          { co: "Blaster Painter", ready: false },
         ].map((c, idx) => (
           <a
             key={c.co}

@@ -7,6 +7,7 @@ import FeaturedQuote from "../../sections/landing/FeaturedQuote";
 import Hero from "../../sections/landing/Hero";
 import Methodology from "../../sections/landing/Methodology";
 import Gallery from "../../sections/landing/Gallery";
+import Gallery2 from "../../sections/landing/Gallery2";
 import AboutCta from "../../sections/about/AboutCta";
 import AboutResearch from "../../sections/about/AboutResearch";
 
@@ -39,6 +40,10 @@ export default function LandingPage() {
       <AboutResearch />
 
       <Gallery />
+
+      <div className="">
+        <Gallery2 />
+      </div>
 
       <AboutCta />
 

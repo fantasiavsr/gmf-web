@@ -22,12 +22,12 @@ export default function Gallery() {
         Training Center
       </h2> */}
 
-      <h3
+      {/* <h3
         className={`text-4xl md:text-6xl font-bold tracking-tight mb-16 text-primary-black dark:text-primary-white transition-all duration-700 ${galleryVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
         style={{ transitionDelay: galleryVisible ? "100ms" : "0ms" }}
       >
         Gallery
-      </h3>
+      </h3> */}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
         {gallery.map((item, idx) => (
