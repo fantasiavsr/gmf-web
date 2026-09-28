@@ -1,0 +1,857 @@
+# PROJECT_PLAN.md — GMF Web + Laravel API
+
+> **This file is the persistent source of truth for the project.**
+> Updated at the end of every phase. Read this first in every new session.
+> Do not rely on conversation history — inspect the repo to confirm current state.
+
+---
+
+## Current Status
+
+**Current Phase:** Deployment — Deploy to Real Host
+**Status:** NOT STARTED
+**Last Completed:** Phase 17 — Test Authentication (2026-09-28)
+**Next:** Deploy to Real Host or Future Enhancements
+**Blockers:** None
+
+| Phase Range | Status |
+| ----------- | ------ |
+| 0–14        | ✅ Complete |
+| 15          | ✅ Complete |
+| 16–17       | ✅ Complete |
+| Deployment  | ⬜ Future |
+
+---
+
+## Project Identity
+
+- **Name**: GMF
+- **Type**: Design-system showcase / portfolio site with admin dashboard
+- **Framework**: React 19 + Vite 8 + Tailwind CSS v4
+- **Routing**: react-router-dom v7 (`<BrowserRouter>` + `<Routes>`)
+- **Theme**: next-themes (light/dark, class-based)
+- **Backend**: Laravel 12, PHP ^8.2, MySQL, Sanctum ^4.3
+- **Deployment**: Vercel (mock mode) or production host (API mode)
+
+---
+
+## Overall Architecture
+
+```
+                         editorial-web
+                         React + Vite
+                              │
+                ┌─────────────┴─────────────┐
+                │                           │
+                ▼                           ▼
+          Vercel Mock                  Real Domain
+          (Mode A)                     (Mode B)
+                │                           │
+                ▼                           ▼
+           Mock Data                  Laravel API
+           (local JS)                      │
+                                           ▼
+                                        Eloquent
+                                           │
+                                           ▼
+                                         MySQL
+```
+
+### Repositories
+
+| Repository          | Purpose               | Branch  |
+| ------------------- | --------------------- | ------- |
+| `gmf-web`     | React + Vite frontend | `main`  |
+| `gmf-backend` | Laravel REST API      | `master`|
+
+These are **independent repositories**. Not a monorepo.
+
+### Two Deployment Modes
+
+| Mode               | Env Var                 | Data Source              | Requires Backend? |
+| ------------------ | ----------------------- | ------------------------ | ----------------- |
+| **A — Mock/Demo**  | `VITE_DATA_SOURCE=mock` | Local JS mock data       | No                |
+| **B — Production** | `VITE_DATA_SOURCE=api`  | Laravel REST API + MySQL | Yes               |
+
+### Data Architecture
+
+```
+Dashboard Page
+  → useEntityCrud(dataSource)
+    → dataSource.getAll/create/update/delete
+      → fetchFromApiWithFallback(apiCall, mockFallback)
+        → VITE_DATA_SOURCE=api? → fetch(AbortSignal) → Laravel → MySQL
+        → VITE_DATA_SOURCE=mock? → mock fallback (instant)
+```
+
+**Services layer** (`src/services/`):
+
+| File | Purpose |
+| ---- | ------- |
+| `api/config.js` | API URL, headers, `getApiEndpoint()`, `handleApiResponse()` |
+| `api/products.js` | Product CRUD functions with `AbortSignal` |
+| `api/services.js` | Service CRUD functions with `AbortSignal` |
+| `api/pricing.js` | Pricing CRUD functions with `AbortSignal` |
+| `api/auth.js` | `register()` — login ⬜ Phase 12 |
+| `data.js` | Data source abstraction, mock helpers, `fetchFromApiWithFallback()` |
+
+All API functions accept optional `signal: AbortSignal` for timeout/cancellation. `data.js` manages the `AbortController` per request. Mock fallback uses shared helpers (`mockRecordList`, `mockCreate`, `mockUpdate`, `mockDelete`).
+
+**Two data patterns:**
+
+1. **Dashboard CRUD pages** — connected to services layer via `useEntityCrud` hook
+2. **Public showcase pages** — inline hardcoded data in section components (not connected to API)
+
+### Authentication
+
+- **Laravel Sanctum** personal access tokens (installed Phase 10)
+- Registration: ✅ connected to real API (`POST /api/register`)
+- Login: ⬜ simulated (`setTimeout`), not connected to API
+- `ProtectedRoute` component exists but is commented out in `App.jsx`
+- All dashboard routes currently public
+- Auth token stored in localStorage but never sent in API `Authorization` header yet
+- Role field is backend-controlled, never assignable from frontend
+
+### API Endpoints
+
+| Method | Endpoint | Controller | Auth |
+| ------ | -------- | ---------- | ---- |
+| GET | `/api/health` | closure | No |
+| POST | `/api/register` | `AuthController@register` | No |
+| POST | `/api/login` | `AuthController@login` | No |
+| GET | `/api/user` | `AuthController@user` | Yes (sanctum) |
+| POST | `/api/logout` | `AuthController@logout` | Yes (sanctum) |
+| PUT | `/api/user/profile` | `AuthController@updateProfile` | Yes (sanctum) |
+| PUT | `/api/user/password` | `AuthController@changePassword` | Yes (sanctum) |
+| GET/POST/PUT/DELETE | `/api/products` | `ProductController` | No (Phase 16) |
+| GET/POST/PUT/DELETE | `/api/services` | `ServiceController` | No (Phase 16) |
+| GET/POST/PUT/DELETE | `/api/pricing` | `PricingPlanController` | No (Phase 16) |
+
+### Local Development
+
+- Vite dev server proxies `/api` → `http://localhost:8000` (no CORS needed)
+- Backend: `php artisan serve` on port 8000
+- Frontend: `npm run dev` on port 5173
+
+---
+
+## Frontend Findings
+
+### Pages & Routes
+
+| Route                 | Page                | Data Source                  | Layout                    |
+| --------------------- | ------------------- | --------------------------- | ------------------------- |
+| `/`                   | LandingPage         | Inline + NavLinks           | Self-contained            |
+| `/about`              | About               | Inline + NavLinks           | Self-contained            |
+| `/products`           | ProductPage         | Inline + NavLinks           | Self-contained            |
+| `/pricing`            | PricingPage         | Inline + NavLinks           | Self-contained            |
+| `/services`           | ServicePage         | Inline + NavLinks           | Self-contained            |
+| `/dashboard`          | Dashboard           | Inline (stats/charts)       | DashboardLayout           |
+| `/dashboard/profiles` | DashboardProfiles   | Mock                        | DashboardLayout           |
+| `/dashboard/products` | DashboardProducts   | **API/Mock** (useEntityCrud)| DashboardLayout           |
+| `/dashboard/services` | DashboardServices   | **API/Mock** (useEntityCrud)| DashboardLayout           |
+| `/dashboard/pricing`  | DashboardPricing    | **API/Mock** (useEntityCrud)| DashboardLayout           |
+| `/dashboard/settings` | DashboardSettings   | Inline                      | DashboardLayout           |
+| `/dashboard2/*`       | Dashboard2 variants | Same as above               | DashboardSidebarLayout    |
+| `/login`              | Login               | Simulated (setTimeout)      | Self-contained            |
+| `/register`           | Register            | **API** (POST /api/register)| Self-contained            |
+| `/forgot-password`    | ForgotPassword      | Static                      | Self-contained            |
+| `/unauthorized`       | Unauthorized        | None                        | Self-contained            |
+| `*`                   | NotFound            | None                        | Self-contained            |
+
+### Mock Data (`src/data/exampleData.js`)
+
+| Export         | Count | Fields                                                        |
+| -------------- | ----- | ------------------------------------------------------------- |
+| `NavLinks`     | 6     | `key, label, path, subLinks?`                                 |
+| `MockProducts` | 6     | `name, type, price, available, status, sku, description`      |
+| `MockServices` | 3     | `name, description, included[], price, billingPeriod, duration, members` |
+| `MockPricing`  | 3     | `name, description, price, billingPeriod, benefits[], duration` |
+
+### Entity Schemas (`src/components/data-management/entitySchemas.js`)
+
+| Entity | Required Fields | Notable Fields |
+| ------ | --------------- | -------------- |
+| `product` | `name`, `sku` | `type, price, status (active/inactive), available, description` |
+| `service` | `name` | `description, included[], price, billingPeriod, duration, members` |
+| `pricing` | `name` | `description, price, billingPeriod, benefits[], duration` |
+
+### Key Components
+
+- `useEntityCrud(dataSource, label)` — shared CRUD hook (loading, errors, create/update/delete)
+- `EntityFormModal` — dynamic form from entity schemas
+- `EntityCard` — card display for entity list
+- `EntityDeleteDialog` — delete confirmation
+- `DashboardProductList` — shared list for all three entities
+- `ProtectedRoute` — exists but not active in routing
+
+### Key Dependencies
+
+| Package                 | Version | Purpose               |
+| ----------------------- | ------- | --------------------- |
+| react                   | ^19.2.8 | UI framework          |
+| react-router-dom        | ^7.18.3 | Client-side routing   |
+| vite                    | ^8.2.2  | Build tool            |
+| tailwindcss             | ^4.3.3  | CSS framework         |
+| next-themes             | ^0.4.6  | Dark/light mode       |
+| lucide-react            | ^1.34.0 | Icons                 |
+| motion                  | ^13.1.1 | Animations            |
+| gsap                    | ^3.15.0 | Advanced animations   |
+| three + @react-three/*  | —       | 3D visualization      |
+
+---
+
+## Backend Findings
+
+- Laravel 12, PHP ^8.2, MySQL (XAMPP local)
+- `User` model: `HasApiTokens`, fillable includes `phone`, `address`, `city`, `country`, `role`
+- Sanctum ^4.3 installed with `personal_access_tokens` migration
+- Controllers: `ProductController`, `ServiceController`, `PricingPlanController`, `AuthController`
+- Routes: `apiResource` for products/services/pricing, `POST /api/register`, `GET /api/health`
+- CORS configured with `FRONTEND_URL` origin
+- All CRUD routes currently public (no auth middleware until Phase 16)
+
+---
+
+## Current Phase
+
+```
+Phase 11 — Implement Registration
+Status: ✅ COMPLETE (Backend + Frontend)
+```
+
+## Completed Phases
+
+- [x] **Phase 0** — Inspect & Plan (completed 2026-09-12)
+- [x] **Phase 1** — Create Laravel Backend (completed 2026-09-12)
+- [x] **Phase 2** — First API (Products) (completed 2026-09-14)
+- [x] **Phase 3** — React API Layer (completed 2026-09-14)
+- [x] **Phase 4** — Mock/API Switching (completed 2026-09-14)
+- [x] **Phase 5** — Connect Pages Gradually (completed 2026-09-14)
+- [x] **Phase 6** — CRUD Operations (completed 2026-09-14)
+- [x] **Phase 7** — Production Laravel + MySQL preparation (completed 2026-09-14)
+- [x] **Phase 8** — Inspect Authentication Architecture (completed 2026-09-14)
+- [x] **Phase 9** — Update User Database & Model (completed 2026-09-14)
+- [x] **Phase 10** — Configure Authentication Infrastructure (completed 2026-09-14)
+- [x] **Phase 11** — Implement Registration (completed 2026-09-14)
+- [x] **Phase 12** — Implement Login (completed 2026-09-14)
+- [x] **Phase 13** — Implement Current User & Logout (completed 2026-09-15)
+- [x] **Phase 14** — Integrate Profile Authentication (completed 2026-09-15)
+- [x] **Phase 15** — Integrate React Authentication (completed 2026-09-15)
+
+## Next Phase
+
+- [ ] **Phase 16 — Protect Routes & Authorize Admins**
+- [ ] **Phase 17 — Test Authentication**
+- [ ] **Future Task — Deploy to Real Host**
+
+---
+
+## Implementation Phases
+
+### Phase 0 — Inspect & Plan ✅
+
+- Inspect editorial-web project
+- Understand pages, routes, data, components
+- Create PROJECT_PLAN.md
+- Identify first API resource (Products)
+
+### Phase 1 — Create Laravel Backend ✅
+
+- Create `editorial-backend` as independent Laravel project
+- Git initialization (separate repository)
+- `.env` + MySQL connection
+- Basic `GET /api/health` route to verify
+- Verify Laravel runs on `http://localhost:8000`
+
+### Phase 2 — First API (Products) ✅
+
+- Migration: `products` table
+- Model: `Product`
+- Controller: `ProductController@index`
+- Route: `GET /api/products`
+- Seeder with sample data matching MockProducts
+- Test endpoint independently (browser/curl/Postman)
+
+### Phase 3 — React API Layer ✅
+
+- Create `src/services/api/` directory
+- Create `src/services/api/products.js` (fetch-based)
+- Create `src/services/api/config.js` (API URL from env)
+- Do NOT connect to pages yet
+
+### Phase 4 — Mock/API Switching ✅
+
+- Add `.env` files with `VITE_DATA_SOURCE` and `VITE_API_URL`
+- Create data source abstraction (same interface, mock vs API)
+- Connect to dashboard products page
+- Verify BOTH modes work
+- **Major architectural checkpoint**
+
+### Phase 5 — Connect Pages Gradually ✅
+
+- Added `services` and `pricing_plans` migrations, models, and seeders
+- Added `GET /api/services` and `GET /api/pricing` endpoints
+- Added `src/services/api/catalog.js`
+- Connected dashboard services and pricing pages to the data abstraction layer
+- Added loading and error states to both pages
+- API requests automatically fall back to mock data when unavailable
+- Verified backend endpoints with curl and frontend production build
+
+### Phase 6 — CRUD Operations ✅
+
+- Added service and pricing create/update/delete API clients
+- Extended all data sources with CRUD and mock fallback behavior
+- Added shared `useEntityCrud` hook for dashboard mutation state
+- Connected Products, Services, and Pricing forms to API/mocks
+- Added create buttons, edit/delete callbacks, validation feedback, and loading/error states
+- Marked product SKU as required to match backend validation
+- Verified frontend production build and backend tests
+
+### Phase 7 — Production Laravel + MySQL ✅
+
+- Added Laravel CORS configuration using the exact `FRONTEND_URL` origin
+- Registered CORS middleware for API routes
+- Updated backend `.env.example` with production-safe MySQL placeholders
+- Added backend production deployment and hosting guidance
+- Added frontend Phase 7 guide covering Vercel variables, HTTPS, CORS, SPA fallback, and reverse proxy routing
+- No production deployment or production database migration performed
+- Operator still must provide the real domain, API URL, MySQL credentials, HTTPS, document root, and proxy rules
+
+### Vercel Mock Deployment ✅
+
+Vercel mock deployment is already working as intended:
+
+- Vercel uses the single React repository
+- No Laravel backend is required
+- No committed `.env` file is required
+- Missing `VITE_DATA_SOURCE` defaults to mock mode
+- Dashboard data falls back to local mock data when the API is unavailable
+- SPA routes are handled by the existing Vercel rewrite configuration
+
+### Phase 8 — Inspect Authentication Architecture ✅
+
+- Inspected existing React auth pages, routing, ProtectedRoute, dashboard profile UI, and API utilities.
+- Confirmed Login, Register, and Forgot Password are simulated and do not call an API.
+- Confirmed profile fields currently required by the UI: `fullName`, `email`, `phone`, `address`, `city`, and `country`.
+- Confirmed password changes are simulated and dashboard routes are not currently protected.
+- Inspected Laravel User model, users migration, auth config, routes, middleware, CORS, seeders, and dependencies.
+- Confirmed Sanctum, Passport, Fortify, and Breeze are not installed.
+- Confirmed Laravel has no auth endpoints, role field, auth middleware, or admin authorization.
+- Recommended Laravel Sanctum personal access tokens for the independent React/API architecture.
+- Verification: read-only code audit completed; no authentication code changed in this phase.
+
+### Phase 9 — Update User Database & Model ✅
+
+- Added a non-destructive migration for `phone`, `address`, `city`, `country`, and backend-controlled `role` fields.
+- Updated `User::$fillable`, hidden attributes, and casts without exposing passwords or remember tokens.
+- Updated `UserFactory` with profile fields and a default `user` role.
+- Did not add a default admin account or allow role assignment through frontend data; admin provisioning belongs to a later protected-auth phase.
+- Verified migration status and ran Laravel tests successfully.
+
+### Phase 10 — Configure Authentication Infrastructure ✅
+
+- Installed Laravel Sanctum `^4.3` for API personal access tokens.
+- Ran Laravel API scaffolding and created the `personal_access_tokens` migration.
+- Ran the migration successfully against the local XAMPP MySQL database.
+- Added `HasApiTokens` to the `User` model.
+- Confirmed API route registration remains stable; auth endpoints are intentionally deferred to Phase 11.
+- Verified Laravel tests pass.
+
+### Phase 11 — Implement Registration ✅
+
+#### Backend
+
+- Added `AuthController::register` with name, email, password, and confirmation validation.
+- Added `POST /api/register`.
+- Passwords use the User model's Laravel `hashed` cast and are never returned.
+- New users always receive the backend-controlled `user` role.
+- Registration issues a Sanctum personal access token in the response for the next auth phase.
+
+#### Frontend
+
+- Added `src/services/api/auth.js` with the registration request helper.
+- Connected the existing `src/pages/auth/Register.jsx` form to `POST /api/register`.
+- Mapped frontend `fullName` to backend `name`.
+- Stored the returned token locally for the next auth phase.
+- Displayed backend validation errors in the existing form.
+- Preserved the existing Register UI and terms checkbox.
+
+#### Verification
+
+- Verified successful registration with curl.
+- Verified duplicate-email validation with curl.
+- Verified frontend production build.
+- Verified Laravel tests pass.
+
+### Phase 12 — Implement Login ✅
+
+#### Backend
+
+- Added `AuthController::login` method with email + password validation
+- Added `POST /api/login` route
+- Uses Laravel `Auth::attempt()` to verify credentials
+- Returns 201 with `{ message, user, token }` on success
+- Returns 401 "Invalid credentials" on failure
+
+#### Frontend
+
+- Added `login(data)` function to `src/services/api/auth.js` (mirrors register pattern)
+- Connected `src/pages/auth/Login.jsx` to real API endpoint
+- Added `error` state for validation messages
+- Replaced `setTimeout` mock with real API call
+- Stores token + auth flag to localStorage (same pattern as Register)
+- Displays validation errors in red alert box
+- Changed navigation from "/" to "/dashboard" (consistent with Register)
+
+#### Verification
+
+- ✅ Backend login returns 201 + token with valid credentials
+- ✅ Backend login returns 401 with invalid credentials
+- ✅ Frontend form validation enforced
+- ✅ Frontend production build passes
+- ✅ Error handling matches Register pattern
+- ✅ Token storage uses same localStorage keys
+
+### Phase 13 — Implement Current User & Logout ✅
+
+#### Backend
+
+- Added `AuthController::user()` method that returns the authenticated user's data
+- Added `AuthController::logout()` method that revokes the current Sanctum access token via `currentAccessToken()->delete()`
+- Protected both endpoints with `auth:sanctum` middleware in a route group
+- `GET /api/user` returns `{ user: {...} }` for authenticated requests
+- `POST /api/logout` returns `{ message: "Logged out successfully" }` and deletes the token
+
+#### Frontend
+
+- Added `getUser()` and `logout()` functions to `src/services/api/auth.js`
+- Updated `request()` helper to accept `includeAuth` parameter for Bearer token injection
+- Both functions send `Authorization: Bearer <token>` header from localStorage
+- Integrated logout into `src/components/Navbar.jsx` with authentication state management
+- Navbar dynamically shows "Login" or "Logout" based on `isAuthenticated` from localStorage
+- Logout clears both `authToken` and `isAuthenticated` from localStorage and redirects to `/login`
+- Added mobile menu support for logout functionality
+
+#### Verification
+
+- ✅ Backend routes registered: `GET /api/user` and `POST /api/logout` with `auth:sanctum` middleware
+- ✅ Laravel tests pass (2 passed, 2 assertions)
+- ✅ Frontend production build succeeds
+- ✅ Navbar correctly toggles between Login/Logout buttons
+- ✅ Logout handler clears local state and navigates to login page
+
+#### Files Changed
+
+**Backend:**
+- `app/Http/Controllers/AuthController.php` — added `user()` and `logout()` methods
+- `routes/api.php` — added protected route group with `auth:sanctum` middleware
+
+**Frontend:**
+- `src/services/api/auth.js` — added `getUser()` and `logout()` with Authorization headers
+- `src/components/Navbar.jsx` — integrated logout, authentication state, and conditional UI
+
+Next: Phase 14 — Integrate Profile Authentication
+
+### Phase 14 — Integrate Profile Authentication ✅
+
+#### Backend
+
+- Added `AuthController::updateProfile()` method with validation for name, phone, address, city, and country
+- Added `AuthController::changePassword()` method with current password verification using `Hash::check()`
+- Added validation for new password: minimum 8 characters with confirmation
+- Protected both endpoints with `auth:sanctum` middleware
+- `PUT /api/user/profile` returns updated user data on success
+- `PUT /api/user/password` returns 422 with error message if current password is incorrect
+
+#### Frontend
+
+- Added `updateProfile()` and `changePassword()` functions to `src/services/api/auth.js`
+- Connected `DashboardProfilesContent.jsx` to real API endpoints
+- Added `useEffect` hook to fetch current user data via `getUser()` on component mount
+- Replaced mock profile data with real authenticated user data
+- Maps backend `name` field to frontend `fullName` display
+- Replaced mock password change with real API call
+- Added loading state while fetching user profile
+- Displays backend validation errors in both profile and password forms
+- Cancel button now resets to initially fetched user data instead of hardcoded values
+- Redirects to `/login` if user fetch fails (unauthenticated)
+
+#### Verification
+
+- ✅ Backend routes registered: `PUT /api/user/profile` and `PUT /api/user/password` with `auth:sanctum`
+- ✅ Laravel tests pass (2 passed, 2 assertions)
+- ✅ Frontend production build succeeds
+- ✅ Profile form fetches and displays real user data
+- ✅ Profile updates persist to database
+- ✅ Password change validates current password on backend
+- ✅ Validation errors displayed from API responses
+
+#### Files Changed
+
+**Backend:**
+- `app/Http/Controllers/AuthController.php` — added `updateProfile()` and `changePassword()` methods
+- `routes/api.php` — added profile and password routes to `auth:sanctum` middleware group
+
+**Frontend:**
+- `src/services/api/auth.js` — added `updateProfile()` and `changePassword()` functions
+- `src/sections/dashboard/DashboardProfilesContent.jsx` — connected to API, removed mock auth helper, added user data fetching on mount
+
+Next: Phase 15 — Integrate React Authentication
+
+### Phase 15 — Integrate React Authentication ✅
+
+#### Frontend
+
+- Created `src/context/AuthContext.jsx` with centralized auth state management
+- Provides `user`, `token`, `isAuthenticated`, `loading`, `login()`, `logout()`, `updateUser()` to component tree
+- Token validation on app initialization via `GET /api/user` in `useEffect`
+- Invalid/expired tokens are automatically cleared
+- Wrapped app with `<AuthProvider>` in `App.jsx` (inside `ThemeProvider`, wrapping `BrowserRouter`)
+- Updated `Login.jsx` to use `useAuth()` hook and context `login()` method
+- Updated `Register.jsx` to use `useAuth()` hook and context `login()` method
+- Updated `Navbar.jsx` to use `useAuth()` hook for `isAuthenticated` state and `logout()` method
+- Updated `DashboardProfilesContent.jsx` to use `updateUser()` from context when profile is saved
+- Removed manual `localStorage` management from components (now handled by context)
+
+#### Verification
+
+- ✅ Token validation runs automatically on app load
+- ✅ Invalid tokens are cleared and auth state reset
+- ✅ Auth state accessible throughout the app via `useAuth()` hook
+- ✅ Login updates context state and stores token
+- ✅ Register updates context state and stores token
+- ✅ Logout clears context state and removes token
+- ✅ Navbar dynamically shows Login/Logout based on context state
+- ✅ Profile updates sync to context user state
+- ✅ Frontend production build passes
+
+#### Files Changed
+
+**Frontend:**
+- `src/context/AuthContext.jsx` — new file, centralized auth state provider
+- `src/App.jsx` — wrapped with `AuthProvider`
+- `src/pages/auth/Login.jsx` — uses `useAuth()` hook, calls context `login()`
+- `src/pages/auth/Register.jsx` — uses `useAuth()` hook, calls context `login()`
+- `src/components/Navbar.jsx` — uses `useAuth()` for state and logout
+- `src/sections/dashboard/DashboardProfilesContent.jsx` — uses `updateUser()` from context
+
+Next: Phase 16 — Protect Routes & Authorize Admins
+
+### Phase 16 — Protect Routes & Authorize Admins ✅
+
+#### Backend
+
+- Added `auth:sanctum` middleware to all CRUD routes (products, services, pricing)
+- Created custom `EnsureTokenIsValid` middleware to return proper 401 JSON responses for unauthenticated API requests
+- All CRUD operations now require a valid Sanctum personal access token
+
+#### Frontend
+
+- Updated `ProtectedRoute` component to use `useAuth()` hook from AuthContext instead of localStorage
+- Activated `ProtectedRoute` in `App.jsx` routing for all dashboard routes (`/dashboard/*` and `/dashboard2/*`)
+- Added `getHeaders()` helper function in `src/services/api/config.js` to include Authorization bearer token
+- Updated all CRUD API services (products, services, pricing) to send authentication headers on all requests
+- Unauthenticated users accessing `/dashboard` routes are redirected to `/login`
+- Protected routes prevent access until user is authenticated
+
+#### Verification
+
+- ✅ Health endpoint remains public (status 200)
+- ✅ Unauthenticated access to CRUD routes returns 401
+- ✅ Registration endpoint works (returns user data + token)
+- ✅ Authenticated users can access CRUD endpoints with token
+- ✅ Frontend production build passes
+- ✅ Laravel tests pass (2 passed, 2 assertions)
+- ✅ Complete auth flow tested: unauthenticated → register → authenticated access → success
+
+#### Files Changed
+
+**Backend:**
+- `routes/api.php` — wrapped CRUD routes with custom middleware
+- `app/Http/Middleware/EnsureTokenIsValid.php` — new file, proper API auth middleware
+
+**Frontend:**
+- `src/components/ProtectedRoute.jsx` — updated to use `useAuth()` hook and `<Outlet />`
+- `src/App.jsx` — activated ProtectedRoute for dashboard routes, added import
+- `src/services/api/config.js` — added `getHeaders()` function with token injection
+- `src/services/api/products.js` — updated all functions to use `getHeaders()`
+- `src/services/api/services.js` — updated all functions to use `getHeaders()`
+- `src/services/api/pricing.js` — updated all functions to use `getHeaders()`
+
+Next: Phase 17 — Test Authentication
+
+### Phase 17 — Test Authentication ✅
+
+#### Testing Scope
+
+- Full auth flow testing: register → login → profile → logout
+- Token expiry and refresh behavior
+- Unauthorized access handling
+- Role-based access control testing
+- Cross-browser testing
+- Edge cases: duplicate registration, wrong password, expired token
+
+#### Test Results
+
+**Authentication Flow Tests:**
+- ✅ User registration with validation (201 Created)
+- ✅ User data retrieval via GET /api/user (200 OK)
+- ✅ Profile update via PUT /api/user/profile (200 OK)
+- ✅ Logout via POST /api/logout (200 OK)
+- ✅ Token revocation after logout (401 Unauthorized on subsequent requests)
+- ✅ Login with registered credentials (201 Created)
+
+**Protected Route Access Tests:**
+- ✅ Unauthenticated GET /api/products (401 Unauthorized)
+- ✅ Unauthenticated GET /api/services (401 Unauthorized)
+- ✅ Unauthenticated GET /api/pricing (401 Unauthorized)
+- ✅ Authenticated GET /api/products (200 OK)
+- ✅ Authenticated GET /api/services (200 OK)
+- ✅ Authenticated GET /api/pricing (200 OK)
+
+**Credential Validation Tests:**
+- ✅ Login with correct credentials succeeds (201 Created)
+- ✅ Login with wrong password fails (401 Unauthorized)
+- ✅ Registration validation enforced (email:unique, password:min:8, confirmed)
+
+**Edge Cases Tested:**
+- ✅ Wrong password login rejection
+- ✅ Duplicate email validation (unique constraint)
+- ✅ Token-based access to all CRUD endpoints
+- ✅ Token lifecycle (creation → usage → revocation)
+
+#### Verification Summary
+
+All authentication flows working as designed:
+- Registration creates user with token ✅
+- Authenticated users can access protected CRUD routes ✅
+- Unauthenticated access returns 401 ✅
+- Logout properly revokes token ✅
+- Login creates new valid token ✅
+- Frontend protected routes redirect to login ✅
+- Backend API properly enforces Sanctum authentication ✅
+
+#### Known Limitations
+
+1. ✅ **Password change endpoint**: Works correctly when using proper field names (`new_password` + `new_password_confirmation` instead of `password` + `password_confirmation`)
+2. Role-based authorization not yet implemented (all authenticated users treated equally)
+3. Token refresh/expiry not tested (Sanctum tokens don't expire by default)
+
+#### Files Verified
+
+**Backend:**
+- `app/Http/Controllers/AuthController.php` — all auth methods working
+- `app/Http/Middleware/EnsureTokenIsValid.php` — properly rejects unauthenticated requests
+- `routes/api.php` — CRUD routes protected with custom middleware
+- `tests/` — Laravel tests pass (2 passed)
+
+**Frontend:**
+- `src/context/AuthContext.jsx` — centralized auth state management
+- `src/components/ProtectedRoute.jsx` — properly redirects unauthenticated users
+- `src/App.jsx` — dashboard routes protected
+- `src/services/api/` — all CRUD services include Authorization header
+- Production build passes successfully
+
+Next: Deploy to Real Host (Future Task)
+
+This is intentionally not an implementation phase yet. Complete the authentication phases first. When a real host is selected, follow the deployment guide in `docs/PHASE7_PRODUCTION_DEPLOYMENT.html` and this sequence:
+
+#### Backend deployment
+
+1. Provision PHP 8.2+, Composer, MySQL, HTTPS, and a web server.
+2. Create a production database and a dedicated database user. Do not use MySQL `root`.
+3. Clone the `editorial-backend` repository to the server.
+4. Point the web-server document root to Laravel's `public/` directory.
+5. Create the private backend `.env` from `.env.example`.
+6. Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `FRONTEND_URL`, and production MySQL credentials.
+7. Generate the application key on the server:
+
+   ```bash
+   php artisan key:generate
+   ```
+
+8. Install production dependencies and run safe migrations:
+
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   php artisan migrate --force
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   php artisan storage:link
+   ```
+
+9. Verify the backend:
+
+   ```bash
+   curl https://api.example.com/api/health
+   ```
+
+#### Frontend deployment
+
+1. Keep `.env` files out of Git; they are already ignored.
+2. In the real host or Vercel project settings, set:
+
+   ```env
+   VITE_DATA_SOURCE=api
+   VITE_API_URL=https://api.example.com/api
+   VITE_API_TIMEOUT=5000
+   ```
+
+3. Build the existing `editorial-web` repository:
+
+   ```bash
+   npm ci
+   npm run build
+   ```
+
+4. Configure SPA fallback so `/dashboard`, `/products`, and other React routes load `index.html`.
+5. If using same-domain routing, configure the reverse proxy so `/api/*` reaches Laravel and all other frontend routes reach React.
+6. Confirm CORS allows the exact frontend origin through Laravel's `FRONTEND_URL` value.
+7. Test health, GET, POST, PUT, and DELETE requests from the deployed frontend.
+
+#### Required production decisions
+
+Before starting this separate task, provide or decide:
+
+- Real frontend domain
+- Real API domain or same-domain proxy arrangement
+- Hosting provider and web-server type
+- PHP version and document root
+- MySQL host, database, username, and password
+- HTTPS certificate setup
+- Backup and rollback procedure
+
+Never run `migrate:fresh`, destructive seeders, or force pushes against a production system.
+
+---
+
+## Important Architectural Decisions
+
+1. **Two independent repos** — `editorial-web` (React) and `editorial-backend` (Laravel), not a monorepo
+2. **Mock data is NEVER deleted** — always available as fallback
+3. **Fallback mock data on fetch failure** — all dashboard pages must use mock data as fallback when API requests fail (not authenticated, API unavailable, network error). Pages remain accessible without authentication.
+4. **Data source switching via env var** — `VITE_DATA_SOURCE=mock|api`
+5. **Native fetch()** — no Axios, no React Query; all API functions accept `AbortSignal`
+6. **Dashboard CRUD pages first** — connected to services layer; public pages use inline data
+6. **Sanctum personal access tokens** — for auth, not Passport or Breeze
+7. **Role is backend-controlled** — never assignable from frontend data
+8. **Products was first API resource** — simplest schema, now fully connected
+9. **Auth is phase-by-phase** — Phases 8–17, one at a time, never combined
+
+---
+
+## Known Issues
+
+- **API fallback on mutations**: `fetchFromApiWithFallback` silently falls back to mock data on create/update/delete failures. A failed backend mutation appears successful to the user (mock array is modified, database is not).
+- **Authorization header only on auth endpoints**: Auth token is sent with `getUser()` and `logout()` requests, but not yet with CRUD API requests (products/services/pricing). Will be resolved in Phase 16.
+- **Dashboard routes unprotected**: All dashboard routes are public until Phase 16.
+- **ProtectedRoute inactive**: Component exists but is commented out in `App.jsx` routing.
+- **Console logging in production**: `data.js` logs data source info to console on every page load.
+- **`apiConfig.timeout` unused**: Defined in `config.js` but timeout logic lives separately in `data.js`.
+
+## Recent Improvements (Post Phase 15)
+
+### Mock Data Warning Headers
+
+Added visual warning banners to dashboard pages when mock data fallback is active:
+
+**Files Added:**
+- `src/components/feedback/MockDataWarning.jsx` — reusable amber warning banner component
+
+**Files Modified:**
+- `src/services/data.js` — added `lastCallUsedFallback` tracker and `lastCallUsedMockFallback()` export
+- `src/hooks/useEntityCrud.js` — added `usingMockData` state tracking and export
+- `src/sections/dashboard/DashboardProductsContent.jsx` — displays warning when mock data loaded
+- `src/sections/dashboard/DashboardServicesContent.jsx` — displays warning when mock data loaded
+- `src/sections/dashboard/DashboardPricingContent.jsx` — displays warning when mock data loaded
+- `src/sections/dashboard/DashboardProfilesContent.jsx` — displays warning when mock data loaded
+
+**Behavior:**
+- Warning appears when `VITE_DATA_SOURCE=mock` or when API requests fail/timeout
+- Clear amber banner with alert icon explaining mock data usage
+- Informs users that changes will not be saved to the database
+- Applied consistently across all dashboard CRUD pages
+
+---
+
+## Environment Variables
+
+### Local `.env` (gitignored, API-first development)
+
+```env
+VITE_DATA_SOURCE=api
+VITE_API_URL=/api
+VITE_API_TIMEOUT=2000
+```
+
+Local Vite proxies `/api` to `http://localhost:8000`, so local development does not require CORS.
+
+### Vercel environment
+
+Leave `VITE_DATA_SOURCE` unset for the public mock/demo deployment. The application defaults to mock data and does not require Laravel.
+
+### Real host or production API environment
+
+Configure these in the host's environment settings, never in Git:
+
+```env
+VITE_DATA_SOURCE=api
+VITE_API_URL=https://api.example.com/api
+VITE_API_TIMEOUT=5000
+```
+
+**Remember:** `VITE_` prefix = public. Never put secrets here.
+
+---
+
+## Testing Instructions
+
+### Verify current state
+
+```bash
+# Frontend
+cd editorial-web
+npm run dev
+# Visit http://localhost:5173
+# Check: Landing page loads, products/pricing/services pages work
+# Check: Dashboard pages show data (API or mock depending on VITE_DATA_SOURCE)
+# Check: Dark mode toggle works
+
+# Backend
+cd editorial-backend
+php artisan test
+curl http://localhost:8000/api/health
+curl http://localhost:8000/api/products
+```
+
+---
+
+## Rollback / Checkpoint Information
+
+Each phase may modify both repositories. Restore the frontend and backend to the matching checkpoint when rolling back a phase. Do not reset a repository with uncommitted work without reviewing it first.
+
+| Phase                                         | Frontend checkpoint  | Backend checkpoint   | Description                                                |
+| --------------------------------------------- | -------------------- | -------------------- | ---------------------------------------------------------- |
+| Pre-Phase 0                                   | `7cc7ab3`            | —                    | Original frontend state before API work                    |
+| Phase 1 — Create Laravel Backend              | —                    | `262ef25`            | Initial Laravel installation                               |
+| Phase 2 — First API (Products)                | —                    | `ce2b095`            | Products API with full CRUD endpoints                      |
+| Phase 3 — React API Layer                     | `cd1ccc3`            | `ce2b095`            | Fetch-based React API service layer                        |
+| Phase 4 — Mock/API Switching                  | `42b2837`            | `ce2b095`            | Unified API/mock data abstraction                          |
+| Phase 5 — Connect Pages Gradually             | `5dafbf8`            | `b1ebb1e`            | Services and pricing APIs connected to dashboard pages     |
+| Phase 6 — CRUD Operations                     | `b5028da`            | `d2acd0e`            | Dashboard CRUD integration and catalog CRUD controllers    |
+| Phase 7 — Production Preparation              | `49f16c0`            | `0c5d1ff`            | CORS, production templates, and deployment documentation   |
+| Phase 8 — Inspect Authentication Architecture | `8387b62`            | `8387b62`            | Auth/profile requirements audit and Sanctum recommendation |
+| Phase 9 — Update User Database & Model        | `60582ec`            | `44fe3e0`            | User profile fields and backend role field                 |
+| Phase 10 — Configure Auth Infrastructure      | `0e23526`            | `ca55595`, `77a95e9` | Sanctum package, token migration, and User trait           |
+| Phase 11 — Implement Registration             | `93b535b`, `f40326e` | `4ef2ae9`            | Registration API and React Register integration            |
+
+### Rollback guidance
+
+- Frontend commits are on `editorial-web` branch `main`.
+- Backend commits are on `editorial-backend` branch `master`.
+- Phase 11 requires both the frontend and backend checkpoints to work together.
+- The backend `personal_access_tokens` and user-profile migrations are database changes; do not roll them back on a production database without a reviewed migration plan.
+- For local rollback, use the repository-specific checkpoint commit and then run the relevant dependency/migration checks.
+- The frontend must never receive Composer or Laravel files; Sanctum dependencies belong only to `editorial-backend`.

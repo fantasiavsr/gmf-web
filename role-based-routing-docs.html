@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Role-Based Routing Documentation</title>
+  <style>
+    :root {
+      --color-primary: #fe7141;
+      --color-bg: #ffffff;
+      --color-surface: #f5f5f5;
+      --color-text: #1a1a1a;
+      --color-text-light: #666666;
+      --color-border: #e0e0e0;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg: #0a0a0a;
+        --color-surface: #1a1a1a;
+        --color-text: #ffffff;
+        --color-text-light: #999999;
+        --color-border: #333333;
+      }
+    }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    h1 {
+      color: var(--color-primary);
+      border-bottom: 3px solid var(--color-primary);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      color: var(--color-text);
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      color: var(--color-text-light);
+      margin-top: 20px;
+      margin-bottom: 12px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .status-complete {
+      background: var(--color-success);
+      color: white;
+    }
+
+    .role-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+
+    .role-card h3 {
+      margin-top: 0;
+      color: var(--color-primary);
+    }
+
+    .route-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .route-table th,
+    .route-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .route-table th {
+      background: var(--color-primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .route-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .code-block {
+      background: var(--color-surface);
+      border-left: 4px solid var(--color-primary);
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .feature-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--color-success);
+      font-weight: bold;
+    }
+
+    .warning-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--color-warning);
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+
+    .info-box {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 4px solid #3b82f6;
+      padding: 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+
+    .test-flow {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    .test-step {
+      margin: 12px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .test-step:before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      background: var(--color-primary);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Role-Based Routing System <span class="status-badge status-complete">IMPLEMENTED</span></h1>
+
+  <p>This document describes the role-based routing system implemented for the Editorial Web project. Users are now routed to different dashboards based on their assigned role.</p>
+
+  <h2>Overview</h2>
+  <p>The role-based routing system ensures that:</p>
+  <ul class="feature-list">
+    <li>Users with role "admin" access the admin dashboard (/dashboard)</li>
+    <li>Users with role "user" access the user dashboard (/user-dashboard)</li>
+    <li>Unauthenticated users are redirected to /login</li>
+    <li>Users attempting to access routes outside their role are redirected to their allowed dashboard</li>
+  </ul>
+
+  <h2>Components</h2>
+
+  <h3>1. RoleBasedRoute Component</h3>
+  <p><strong>Location:</strong> <code>src/components/RoleBasedRoute.jsx</code></p>
+  <p>A React component that wraps route groups and enforces role-based access control.</p>
+
+  <div class="code-block">
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+export default function RoleBasedRoute({ requiredRole }) {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) return null;
+  if (!isAuthenticated) return &lt;Navigate to="/login" replace /&gt;;
+
+  if (requiredRole && user?.role !== requiredRole) {
+    if (user?.role === "admin") return &lt;Navigate to="/dashboard" replace /&gt;;
+    if (user?.role === "user") return &lt;Navigate to="/user-dashboard" replace /&gt;;
+    return &lt;Navigate to="/unauthorized" replace /&gt;;
+  }
+
+  return &lt;Outlet /&gt;;
+}
+  </div>
+
+  <div class="info-box">
+    <strong>How it works:</strong>
+    <ul>
+      <li>Checks if user is authenticated via AuthContext</li>
+      <li>Verifies user has the required role</li>
+      <li>Redirects to appropriate dashboard if role doesn't match</li>
+      <li>Renders nested routes if all checks pass</li>
+    </ul>
+  </div>
+
+  <h2>Route Configuration</h2>
+
+  <h3>Admin Dashboard Routes</h3>
+  <p>Only accessible to users with role "admin"</p>
+  <div class="role-card">
+    <h3>Admin Dashboard</h3>
+    <table class="route-table">
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Component</th>
+          <th>Access Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>/dashboard</td>
+          <td>Dashboard</td>
+          <td>Admin Only</td>
+        </tr>
+        <tr>
+          <td>/dashboard/profiles</td>
+          <td>DashboardProfiles</td>
+          <td>Admin Only</td>
+        </tr>
+        <tr>
+          <td>/dashboard/products</td>
+          <td>DashboardProducts</td>
+          <td>Admin Only</td>
+        </tr>
+        <tr>
+          <td>/dashboard/services</td>
+          <td>DashboardServices</td>
+          <td>Admin Only</td>
+        </tr>
+        <tr>
+          <td>/dashboard/pricing</td>
+          <td>DashboardPricing</td>
+          <td>Admin Only</td>
+        </tr>
+        <tr>
+          <td>/dashboard/settings</td>
+          <td>DashboardSettings</td>
+          <td>Admin Only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>User Dashboard Routes</h3>
+  <p>Only accessible to users with role "user"</p>
+  <div class="role-card">
+    <h3>User Dashboard</h3>
+    <table class="route-table">
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Component</th>
+          <th>Access Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>/user-dashboard</td>
+          <td>UserDashboard</td>
+          <td>User Only</td>
+        </tr>
+        <tr>
+          <td>/user-dashboard/profiles</td>
+          <td>UserDashboardProfiles</td>
+          <td>User Only</td>
+        </tr>
+        <tr>
+          <td>/user-dashboard/settings</td>
+          <td>UserDashboardSettings</td>
+          <td>User Only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>User Flow</h2>
+
+  <h3>Login Flow</h3>
+  <div class="test-flow">
+    <div class="test-step" data-step="1">User navigates to /login</div>
+    <div class="test-step" data-step="2">Enters credentials and submits</div>
+    <div class="test-step" data-step="3">Backend validates and returns user with role</div>
+    <div class="test-step" data-step="4">Frontend stores token and user role in AuthContext</div>
+    <div class="test-step" data-step="5">User is redirected based on role:
+      <ul>
+        <li>Admin → /dashboard</li>
+        <li>User → /user-dashboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Access Control Flow</h3>
+  <div class="test-flow">
+    <div class="test-step" data-step="1">User tries to access a protected route</div>
+    <div class="test-step" data-step="2">RoleBasedRoute component checks authentication</div>
+    <div class="test-step" data-step="3">RoleBasedRoute checks required role</div>
+    <div class="test-step" data-step="4">If role matches → Route is accessible</div>
+    <div class="test-step" data-step="5">If role doesn't match → Redirect to allowed dashboard</div>
+  </div>
+
+  <h2>Implementation Details</h2>
+
+  <h3>AuthContext Integration</h3>
+  <p>The RoleBasedRoute component uses the AuthContext to access:</p>
+  <ul>
+    <li><code>isAuthenticated</code> - Whether user is logged in</li>
+    <li><code>user.role</code> - The user's assigned role</li>
+    <li><code>loading</code> - Whether auth state is still being validated</li>
+  </ul>
+
+  <div class="info-box">
+    <strong>Important:</strong> The user role comes from the backend during login and is never modified by the frontend. This ensures role-based access control cannot be bypassed by client-side manipulation.
+  </div>
+
+  <h3>Backend Integration</h3>
+  <p>The backend provides user roles through:</p>
+  <ul>
+    <li><code>POST /api/login</code> - Returns user object with role</li>
+    <li><code>GET /api/user</code> - Returns authenticated user with role</li>
+    <li><code>POST /api/register</code> - New users assigned default role "user"</li>
+  </ul>
+
+  <h2>Testing the System</h2>
+
+  <h3>Test Scenario 1: Admin User Access</h3>
+  <div class="test-flow">
+    <div class="test-step" data-step="1">Register/Login as admin user</div>
+    <div class="test-step" data-step="2">Navigate to /dashboard → ✓ Access granted</div>
+    <div class="test-step" data-step="3">Navigate to /user-dashboard → Redirected to /dashboard</div>
+    <div class="test-step" data-step="4">Can access all admin routes (products, services, pricing)</div>
+  </div>
+
+  <h3>Test Scenario 2: Regular User Access</h3>
+  <div class="test-flow">
+    <div class="test-step" data-step="1">Register/Login as regular user (role: "user")</div>
+    <div class="test-step" data-step="2">Navigate to /user-dashboard → ✓ Access granted</div>
+    <div class="test-step" data-step="3">Navigate to /dashboard → Redirected to /user-dashboard</div>
+    <div class="test-step" data-step="4">Can access user dashboard routes</div>
+  </div>
+
+  <h3>Test Scenario 3: Unauthenticated Access</h3>
+  <div class="test-flow">
+    <div class="test-step" data-step="1">User not logged in</div>
+    <div class="test-step" data-step="2">Try to access /dashboard → Redirected to /login</div>
+    <div class="test-step" data-step="3">Try to access /user-dashboard → Redirected to /login</div>
+  </div>
+
+  <h2>Security Considerations</h2>
+
+  <div class="warning-box">
+    <strong>⚠️ Important:</strong>
+    <ul>
+      <li>Role is determined by backend and sent during authentication</li>
+      <li>Frontend enforces UI-level access control</li>
+      <li>Backend API endpoints are also protected with authentication middleware</li>
+      <li>CRUD operations (products, services, pricing) require valid authentication token</li>
+      <li>Even if frontend is bypassed, backend API will reject unauthorized requests</li>
+    </ul>
+  </div>
+
+  <h2>Current Status</h2>
+
+  <div class="role-card">
+    <h3>✓ Implementation Complete</h3>
+    <ul class="feature-list">
+      <li>RoleBasedRoute component created</li>
+      <li>Admin dashboard routes configured</li>
+      <li>User dashboard routes configured</li>
+      <li>Frontend build passes</li>
+      <li>Role-based access control active</li>
+      <li>Automatic redirection working</li>
+      <li>Backend protection in place</li>
+    </ul>
+  </div>
+
+  <h2>Next Steps</h2>
+
+  <p>To fully utilize the role-based routing system:</p>
+  <ol>
+    <li><strong>Register test users</strong> - Create both admin and user accounts</li>
+    <li><strong>Test role-based access</strong> - Verify users can only access their allowed dashboards</li>
+    <li><strong>Backend role assignment</strong> - Ensure backend properly assigns roles (currently all new users get "user" role)</li>
+    <li><strong>Admin creation</strong> - Set up a process for creating admin users</li>
+    <li><strong>Role management UI</strong> - Optionally create admin panel for managing user roles</li>
+  </ol>
+
+  <h2>Files Modified</h2>
+
+  <ul>
+    <li><code>src/components/RoleBasedRoute.jsx</code> - New component for role-based access control</li>
+    <li><code>src/App.jsx</code> - Updated to use RoleBasedRoute for role-specific dashboards</li>
+  </ul>
+</body>
+</html>

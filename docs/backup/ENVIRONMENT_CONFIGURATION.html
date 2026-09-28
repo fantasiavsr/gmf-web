@@ -1,0 +1,479 @@
+<title>Environment Configuration Guide</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --border: #e5e5e3;
+  --accent: #fe7141;
+  --accent-light: #fed4c7;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --code-bg: #f3f3f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #999999;
+    --border: #333333;
+    --code-bg: #262625;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f5;
+  --text-secondary: #999999;
+  --border: #333333;
+  --code-bg: #262625;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+}
+
+header {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+}
+
+p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.alert {
+  background: var(--surface);
+  border-left: 4px solid var(--warning);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert.critical {
+  border-left-color: var(--error);
+}
+
+.alert.info {
+  border-left-color: var(--accent);
+}
+
+code {
+  font-family: "Monaco", "Courier New", monospace;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.mock {
+  background: #dbeafe;
+  color: #0369a1;
+}
+
+.badge.api {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.steps {
+  list-style: none;
+}
+
+.steps li {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  counter-increment: step-counter;
+}
+
+.steps {
+  counter-reset: step-counter;
+}
+
+.steps li::before {
+  content: counter(step-counter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.file-structure {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+@media (max-width: 700px) {
+  .comparison { grid-template-columns: 1fr; }
+}
+
+.comparison-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.comparison-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.debug-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+}
+
+.debug-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.debug-line {
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+
+.danger {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.success {
+  color: var(--success);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+}
+</style>
+
+<header>
+  <h1>Environment Configuration Guide</h1>
+  <p class="subtitle">Understanding Vite environment variables and mock/API switching</p>
+</header>
+
+<main>
+  <section>
+    <h2>The Issue: Why Your Backend Isn't Always Required</h2>
+
+    <div class="alert critical">
+      <strong>🔴 Critical Discovery:</strong> Vite loads environment files in priority order. <code>.env.local</code> always overrides <code>.env</code>. This means your dev server may be in API mode even when you thought it was in mock mode.
+    </div>
+
+    <p>When you turn off XAMPP or stop running <code>php artisan serve</code>, the dashboard still loads because of <strong>intelligent API fallback to mock data</strong>. This is now a feature (after the fix), but it's important to understand the environment configuration to properly test both modes.</p>
+  </section>
+
+  <section>
+    <h2>Vite Environment Variable Precedence</h2>
+
+    <p>Vite loads environment files in this order (highest to lowest priority):</p>
+
+    <div class="file-structure">
+      <strong>.env.local</strong> ← ✅ Highest priority (loaded first, overrides everything)<br>
+      <strong>.env</strong> ← Fallback (used if .env.local doesn't exist)
+    </div>
+
+    <div class="alert info">
+      <strong>📌 How Vite Works:</strong> When the dev server starts, it reads environment variables ONCE. Changes to .env files require restarting <code>npm run dev</code> to take effect. The values are cached and baked into the client at build time.
+    </div>
+  </section>
+
+  <section>
+    <h2>Current Configuration</h2>
+
+    <div class="comparison">
+      <div class="comparison-item">
+        <div class="comparison-title">
+          <span class="badge mock">MOCK</span>
+          <code>.env</code>
+        </div>
+        <pre>VITE_DATA_SOURCE=mock</pre>
+        <p style="margin-top: 12px; font-size: 14px;">Default. Used for Vercel deployment and demo mode.</p>
+      </div>
+
+      <div class="comparison-item">
+        <div class="comparison-title">
+          <span class="badge api">API</span>
+          <code>.env.local</code>
+        </div>
+        <pre>VITE_DATA_SOURCE=api
+VITE_API_URL=http://localhost:8000/api</pre>
+        <p style="margin-top: 12px; font-size: 14px;">Local development. Overrides .env if it exists.</p>
+      </div>
+    </div>
+
+    <div class="alert">
+      <strong>⚠️ Your Current Setup:</strong> Since <code>.env.local</code> exists, your dev server is <strong>currently in API mode</strong>. Even though <code>.env</code> says mock, <code>.env.local</code> takes precedence.
+    </div>
+  </section>
+
+  <section>
+    <h2>How to Switch Modes</h2>
+
+    <h3>Option 1: Use Mock Mode (For Vercel/Demo)</h3>
+
+    <ol class="steps">
+      <li>Delete or rename <code>.env.local</code></li>
+      <li>Restart dev server: <code>npm run dev</code></li>
+      <li>Dev server now reads <code>.env</code> which says <code>VITE_DATA_SOURCE=mock</code></li>
+      <li>No backend required — dashboard works offline</li>
+    </ol>
+
+    <pre>$ rm .env.local
+$ npm run dev
+# Output in console: 📦 Data source: MOCK</pre>
+
+    <h3>Option 2: Use API Mode (For Local Development)</h3>
+
+    <ol class="steps">
+      <li>Keep <code>.env.local</code> in place</li>
+      <li>Start Laravel backend: <code>php artisan serve --port=8000</code></li>
+      <li>Restart dev server: <code>npm run dev</code></li>
+      <li>Dev server reads <code>.env.local</code> which says <code>VITE_DATA_SOURCE=api</code></li>
+      <li>Dashboard fetches real data from API</li>
+    </ol>
+
+    <pre>$ php artisan serve --port=8000
+# In another terminal:
+$ npm run dev
+# Output in console: 📦 Data source: API</pre>
+  </section>
+
+  <section>
+    <h2>Intelligent API Fallback (New!)</h2>
+
+    <p>When API mode is enabled but the backend is unavailable, the system now gracefully falls back to mock data:</p>
+
+    <pre>API Request → FAILED (backend down)
+    ↓
+Check: ENABLE_API_FALLBACK = true?
+    ↓
+YES → Use mock data instead
+    ↓
+⚠️  Console warning: "API request failed, falling back to mock data"
+    ↓
+Dashboard displays mock products normally</pre>
+
+    <p>This is why your dashboard still works even when XAMPP is off — it falls back gracefully instead of showing an error.</p>
+  </section>
+
+  <section>
+    <h2>Debugging: Check Your Current Mode</h2>
+
+    <div class="debug-box">
+      <div class="debug-title">🔍 Check Console Output</div>
+      <div class="debug-line">Open browser DevTools → Console tab</div>
+      <div class="debug-line" style="margin-top: 12px;">Look for these messages on page load:</div>
+      <div class="debug-line" style="margin-top: 12px;"><span class="success">✓ Mock mode</span>: <code>📦 Data source: MOCK</code></div>
+      <div class="debug-line"><span class="success">✓ API mode</span>: <code>📦 Data source: API</code></div>
+      <div class="debug-line"><span class="danger">⚠️  Fallback active</span>: <code>⚠️ API request failed, falling back to mock data</code></div>
+    </div>
+
+    <h3>Quick File Check</h3>
+    <pre>$ cat .env
+VITE_DATA_SOURCE=mock
+
+$ cat .env.local
+VITE_DATA_SOURCE=api
+VITE_API_URL=http://localhost:8000/api</pre>
+
+    <p>If both files exist: <code>.env.local</code> wins (API mode)</p>
+    <p>If only <code>.env</code> exists: Mock mode is active</p>
+  </section>
+
+  <section>
+    <h2>Testing Checklist</h2>
+
+    <h3>✓ Test Mock Mode</h3>
+    <ol class="steps">
+      <li>Delete/rename <code>.env.local</code></li>
+      <li>Restart: <code>npm run dev</code></li>
+      <li>Open dashboard: http://localhost:5173/dashboard/products</li>
+      <li>Verify: Shows 6 products</li>
+      <li>Console: <code>📦 Data source: MOCK</code></li>
+      <li>Turn off XAMPP and Laravel — dashboard still works</li>
+    </ol>
+
+    <h3>✓ Test API Mode (Backend Running)</h3>
+    <ol class="steps">
+      <li>Start Laravel: <code>php artisan serve --port=8000</code></li>
+      <li>Restart: <code>npm run dev</code></li>
+      <li>Open dashboard: http://localhost:5173/dashboard/products</li>
+      <li>Verify: Shows 6 products from API</li>
+      <li>Console: <code>📦 Data source: API</code></li>
+      <li>Try CRUD operations: create/edit/delete persists in MySQL</li>
+    </ol>
+
+    <h3>✓ Test API Fallback (Backend Off)</h3>
+    <ol class="steps">
+      <li>Start in API mode (with .env.local)</li>
+      <li>Turn off XAMPP or stop Laravel</li>
+      <li>Refresh dashboard</li>
+      <li>Verify: Still shows 6 products (from fallback)</li>
+      <li>Console: <code>⚠️ API request failed, falling back to mock data</code></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Key Takeaways</h2>
+
+    <ul style="list-style: none; padding: 0;">
+      <li style="margin-bottom: 12px;">📌 <strong>.env.local overrides .env</strong> — It's not a mistake, it's intentional design</li>
+      <li style="margin-bottom: 12px;">🔄 <strong>Changes require restart</strong> — Vite caches env variables at startup</li>
+      <li style="margin-bottom: 12px;">🎯 <strong>Two modes, one codebase</strong> — Same React app works in both</li>
+      <li style="margin-bottom: 12px;">⚡ <strong>Graceful fallback</strong> — API mode falls back to mock if backend fails</li>
+      <li style="margin-bottom: 12px;">✅ <strong>Vercel uses .env</strong> — Automatically uses mock mode (no backend needed)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>File Structure Reference</h2>
+
+    <p>Location of environment files in your project:</p>
+
+    <div class="file-structure">
+      editorial-web/<br>
+      ├── .env ← Default config (mock mode for Vercel)<br>
+      ├── .env.local ← Local override (API mode for dev)<br>
+      ├── src/<br>
+      │   ├── services/<br>
+      │   │   ├── data.js ← Data source abstraction<br>
+      │   │   └── api/<br>
+      │   │       ├── config.js ← API configuration<br>
+      │   │       └── products.js ← API functions<br>
+      │   └── data/<br>
+      │       └── exampleData.js ← Mock products<br>
+      └── docs/<br>
+          └── PHASE4_MOCK_API_SWITCHING.html ← Full documentation
+    </div>
+  </section>
+</main>

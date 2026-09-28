@@ -1,0 +1,409 @@
+<title>Smart Environment Configuration</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --border: #e5e5e3;
+  --accent: #fe7141;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --code-bg: #f3f3f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #999999;
+    --border: #333333;
+    --code-bg: #262625;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f5;
+  --text-secondary: #999999;
+  --border: #333333;
+  --code-bg: #262625;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+}
+
+header {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+}
+
+p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+code {
+  font-family: "Monaco", "Courier New", monospace;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.flow {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.flow-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.flow-item:last-child {
+  margin-bottom: 0;
+}
+
+.flow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.scenario {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.scenario-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.scenario-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.fallback {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.config-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.config-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.checklist {
+  list-style: none;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.checklist li::before {
+  content: "✓";
+  color: var(--success);
+  font-weight: 700;
+  min-width: 20px;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+}
+</style>
+
+<header>
+  <h1>Smart Environment Setup</h1>
+  <p class="subtitle">API mode with automatic fallback to mock data — no env file switching needed</p>
+</header>
+
+<main>
+  <section>
+    <h2>The Goal</h2>
+    <p>You want a single `.env` configuration that:</p>
+    <ul class="checklist">
+      <li>Always tries to fetch from the API first</li>
+      <li>Automatically falls back to mock data if the backend fails</li>
+      <li>Works whether or not XAMPP/Laravel is running</li>
+      <li>No need to change `.env` files — just works everywhere</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Current Configuration</h2>
+
+    <div class="config-box">
+      <div class="config-title">.env (Single configuration for all environments)</div>
+      <pre>VITE_DATA_SOURCE=api
+VITE_API_URL=http://localhost:8000/api</pre>
+    </div>
+
+    <div class="config-box">
+      <div class="config-title">src/services/data.js (The magic)</div>
+      <pre>const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE || 'mock';
+const ENABLE_API_FALLBACK = true; // ← This is key!</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>How It Works</h2>
+
+    <p><strong>When the dashboard loads:</strong></p>
+
+    <div class="flow">
+      <div class="flow-item">
+        <div class="flow-icon">1</div>
+        <div>Component calls <code>productDataSource.getAll()</code></div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-icon">2</div>
+        <div>Data service checks: Is <code>VITE_DATA_SOURCE=api</code>? YES</div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-icon">3</div>
+        <div>Tries: <code>fetch('http://localhost:8000/api/products')</code></div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-icon">⚡</div>
+        <div><strong>Decision Point:</strong> What's the result?</div>
+      </div>
+    </div>
+
+    <h3>Scenario 1: Backend is Running ✅</h3>
+    <div class="scenario">
+      <div class="scenario-title">XAMPP on + Laravel running</div>
+      <p>API request succeeds → Returns real data from database</p>
+      <div class="scenario-result">
+        <span class="badge success">SUCCESS</span>
+        <span>Dashboard shows 6 products from API</span>
+      </div>
+    </div>
+
+    <h3>Scenario 2: Backend is Down ⚠️</h3>
+    <div class="scenario">
+      <div class="scenario-title">XAMPP off OR Laravel not running</div>
+      <p>API request fails → Check <code>ENABLE_API_FALLBACK=true</code> → Use mock data</p>
+      <div class="scenario-result">
+        <span class="badge fallback">FALLBACK</span>
+        <span>Dashboard shows mock products (no error!)</span>
+      </div>
+      <p style="margin-top: 8px; font-size: 13px; color: var(--text-secondary);">
+        Console: <code>⚠️ API request failed, falling back to mock data</code>
+      </p>
+    </div>
+
+    <h3>Scenario 3: Network Error 🌐</h3>
+    <div class="scenario">
+      <div class="scenario-title">Connection issue or DNS failure</div>
+      <p>Any fetch error → Check <code>ENABLE_API_FALLBACK=true</code> → Use mock data</p>
+      <div class="scenario-result">
+        <span class="badge fallback">FALLBACK</span>
+        <span>Dashboard gracefully falls back to mock</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Test It Yourself</h2>
+
+    <h3>Test 1: With Backend Running</h3>
+    <ol class="checklist">
+      <li>Start: <code>php artisan serve --port=8000</code></li>
+      <li>Start: <code>npm run dev</code></li>
+      <li>Open: http://localhost:5173/dashboard/products</li>
+      <li>Check console: <code>📦 Data source: API</code></li>
+      <li>Verify: Shows 6 products (real API data)</li>
+      <li>Try: Create/edit/delete → Persists in database ✅</li>
+    </ol>
+
+    <h3>Test 2: Without Backend (Fallback)</h3>
+    <ol class="checklist">
+      <li>Close/stop Laravel or turn off XAMPP</li>
+      <li>Refresh: http://localhost:5173/dashboard/products</li>
+      <li>Check console: <code>⚠️ API request failed, falling back to mock data</code></li>
+      <li>Verify: Still shows 6 products (mock data) ✅</li>
+      <li>No error message, no loading spinner forever</li>
+      <li>Graceful fallback — "just works"</li>
+    </ol>
+
+    <h3>Test 3: On Vercel (Production)</h3>
+    <ol class="checklist">
+      <li>`.env.local` is in `.gitignore` → Not deployed</li>
+      <li>Only `.env` is deployed (with API mode)</li>
+      <li>On Vercel: No backend server running</li>
+      <li>API requests fail → Fallback to mock ✅</li>
+      <li>Demo site works perfectly without backend</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Why This Is Perfect</h2>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <h3 style="margin-top: 0;">✅ Single configuration</h3>
+      <p style="margin-bottom: 0;">No need to switch between `.env` and `.env.local`</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <h3 style="margin-top: 0;">✅ Works everywhere</h3>
+      <p style="margin-bottom: 0;">Local dev, Vercel, production domain — same config works in all</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <h3 style="margin-top: 0;">✅ Graceful degradation</h3>
+      <p style="margin-bottom: 0;">Backend down? No problem — falls back to mock automatically</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <h3 style="margin-top: 0;">✅ Best user experience</h3>
+      <p style="margin-bottom: 0;">No errors, no loading spinners forever, just "works"</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <h3 style="margin-top: 0;">✅ Vercel deployment ready</h3>
+      <p style="margin-bottom: 0;">Demo site works without any backend required</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Key Files</h2>
+
+    <p><strong>.env</strong> — Your configuration (the only one you need)</p>
+    <pre>VITE_DATA_SOURCE=api
+VITE_API_URL=http://localhost:8000/api</pre>
+
+    <p><strong>src/services/data.js</strong> — The abstraction layer (already handles fallback)</p>
+    <p style="color: var(--text-secondary); font-size: 14px;">✓ Tries API first<br>✓ Falls back to mock if API fails<br>✓ Logs to console which mode is active</p>
+
+    <p><strong>.env.local</strong> — Can delete or ignore (no longer needed with this setup)</p>
+  </section>
+
+  <section>
+    <h2>Summary</h2>
+
+    <p>You now have the ideal setup:</p>
+
+    <div style="background: var(--accent-light); border-radius: 8px; padding: 16px; color: var(--accent);">
+      <strong>One .env file → Always tries API → Automatic fallback to mock when backend is down</strong>
+    </div>
+
+    <p style="margin-top: 20px;">This is exactly what you asked for. No more switching environment files. Just:</p>
+
+    <ul class="checklist">
+      <li>Start backend when you need it: <code>php artisan serve --port=8000</code></li>
+      <li>Run frontend: <code>npm run dev</code></li>
+      <li>Dashboard works either way automatically ✅</li>
+    </ul>
+  </section>
+</main>

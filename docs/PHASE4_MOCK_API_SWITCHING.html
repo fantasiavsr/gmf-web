@@ -1,0 +1,558 @@
+<title>Phase 4: Mock/API Switching Demo</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --border: #e5e5e3;
+  --accent: #fe7141;
+  --accent-light: #fed4c7;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --code-bg: #f3f3f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #999999;
+    --border: #333333;
+    --code-bg: #262625;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f5;
+  --text-secondary: #999999;
+  --border: #333333;
+  --code-bg: #262625;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+}
+
+header {
+  max-width: 1000px;
+  margin: 0 auto 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status::before {
+  content: "●";
+  font-size: 12px;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+}
+
+p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.info-box {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 700px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.mode-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.mode-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.mock {
+  background: #dbeafe;
+  color: #0369a1;
+}
+
+.badge.api {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.feature-list {
+  list-style: none;
+  margin-top: 12px;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.feature-list li::before {
+  content: "✓";
+  color: var(--success);
+  font-weight: 700;
+  min-width: 20px;
+}
+
+code {
+  font-family: "Monaco", "Courier New", monospace;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.flowchart {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 24px 0;
+  text-align: center;
+}
+
+.flow-box {
+  display: inline-block;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 0 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.flow-arrow {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.testing-box {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.testing-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.test-step {
+  background: var(--code-bg);
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.test-step:last-child {
+  margin-bottom: 0;
+}
+
+.checkpoint {
+  background: var(--surface);
+  border: 2px solid var(--success);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.checkpoint-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--success);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  .flow-box { display: block; margin: 8px 0; }
+}
+</style>
+
+<header>
+  <h1>Mock/API Switching Architecture</h1>
+  <p class="subtitle">Phase 4 — The major architectural checkpoint</p>
+  <div class="status">Complete & Verified</div>
+</header>
+
+<main>
+  <section>
+    <h2>Overview</h2>
+    <p>Phase 4 implements the abstraction layer that allows the React frontend to seamlessly switch between mock data (for development and Vercel deployment) and real API calls (for production). This is the critical architectural checkpoint where the two deployment modes converge.</p>
+
+    <div class="info-box">
+      <strong>🎯 The Key Insight:</strong> React components use a single unified interface. The underlying data source (mock or API) is controlled by environment variables — components don't need to know or care which one is active.
+    </div>
+  </section>
+
+  <section>
+    <h2>The Two Deployment Modes</h2>
+
+    <div class="grid-2">
+      <div class="mode-card">
+        <div class="mode-title">
+          <span class="badge mock">MOCK</span>
+          Vercel / Demo
+        </div>
+        <ul class="feature-list">
+          <li>Uses local mock data</li>
+          <li>No backend required</li>
+          <li>Works offline</li>
+          <li>Instant responses</li>
+          <li>Perfect for demos</li>
+          <li><strong>Automatic:</strong> No <code>.env</code> on Vercel = mock mode</li>
+        </ul>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-title">
+          <span class="badge api">API</span>
+          Local Dev / Production
+        </div>
+        <ul class="feature-list">
+          <li>Uses Laravel API</li>
+          <li>Queries MySQL database</li>
+          <li>Real CRUD operations</li>
+          <li>Network requests</li>
+          <li>Persisted data</li>
+          <li><strong>Automatic:</strong> API first, fallback to mock if backend down</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top: 16px;">
+      <strong>🎯 Single Configuration:</strong> No need to switch between files. The same codebase automatically handles both modes:
+      <ul style="margin-top: 8px; margin-bottom: 0; padding-left: 20px;">
+        <li><strong>Vercel:</strong> No <code>.env</code> → defaults to mock → works without backend</li>
+        <li><strong>Local dev:</strong> Create <code>.env</code> → tries API → falls back to mock if backend down</li>
+        <li><strong>Production:</strong> Set <code>VITE_API_URL</code> in hosting dashboard → uses real API</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>The Abstraction Layer</h2>
+
+    <p>Located in <code>src/services/data.js</code>, the abstraction layer provides a single interface for components:</p>
+
+    <pre>import { productDataSource } from './services/data.js'
+
+// Same interface, any data source
+const products = await productDataSource.getAll()
+const product = await productDataSource.getById(1)
+await productDataSource.create(newProduct)
+await productDataSource.update(id, changes)
+await productDataSource.delete(id)</pre>
+
+    <h3>How It Works</h3>
+    <p>At runtime, the data service always tries the API first, then falls back to mock if anything fails:</p>
+
+    <div class="flowchart">
+      <div style="margin-bottom: 12px;">
+        <span class="flow-box">React Component</span>
+        <span class="flow-arrow">↓</span>
+        <span class="flow-box">productDataSource.getAll()</span>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <span class="flow-box">Check: VITE_DATA_SOURCE === 'api'?</span>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <div style="display: inline-block;">
+          <span class="flow-box" style="background: #dcfce7; color: #166534;">✓ YES → Try API</span>
+          <span class="flow-arrow">↓</span>
+          <span class="flow-box">fetch() with timeout</span>
+        </div>
+      </div>
+      <div>
+        <div style="display: inline-block; margin-right: 24px;">
+          <span class="flow-box" style="background: #dcfce7; color: #166534;">Success</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-box">Return API data</span>
+        </div>
+        <div style="display: inline-block;">
+          <span class="flow-box" style="background: #fef3c7; color: #92400e;">Failed/Timeout</span>
+          <span class="flow-arrow">→</span>
+          <span class="flow-box">Fallback to mock</span>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px;"><strong>API mode</strong> tries real fetch() with a configurable timeout. If it fails or times out, <strong>automatic fallback</strong> kicks in and uses mock data. <strong>No errors shown to the user.</strong></p>
+  </section>
+
+  <section>
+    <h2>What Was Built in Phase 4</h2>
+
+    <h3>1. Environment Configuration</h3>
+    <ul class="feature-list">
+      <li><code>.env</code> — gitignored, API mode with timeout (local development)</li>
+      <li><strong>Vercel:</strong> No <code>.env</code> → automatically uses mock mode</li>
+      <li><code>VITE_API_TIMEOUT</code> — configurable timeout (default: 1000ms)</li>
+    </ul>
+
+    <h3>2. Data Abstraction Layer</h3>
+    <p><code>src/services/data.js</code> exports:</p>
+    <ul class="feature-list">
+      <li><code>productDataSource</code> — Products with getAll(), getById(), create(), update(), delete()</li>
+      <li><code>serviceDataSource</code> — Services with getAll(), create(), update(), delete()</li>
+      <li><code>pricingDataSource</code> — Pricing with getAll(), create(), update(), delete()</li>
+      <li><code>getDataSourceMode()</code> — Returns 'mock' or 'api'</li>
+      <li><code>isUsingMockData()</code> — Boolean helper</li>
+    </ul>
+
+    <h3>3. Updated Dashboard</h3>
+    <p><code>src/sections/dashboard/DashboardProductsContent.jsx</code> now:</p>
+    <ul class="feature-list">
+      <li>Loads products on component mount</li>
+      <li>Uses productDataSource abstraction</li>
+      <li>Shows loading spinner while fetching</li>
+      <li>Displays error message with retry button on failure</li>
+      <li>Works with both mock and API modes seamlessly</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Testing</h2>
+
+    <div class="testing-box">
+      <div class="testing-title">🧪 Test API Mode (Backend Running)</div>
+      <div class="test-step">
+        <strong>1. Start Laravel:</strong> <code>php artisan serve --port=8000</code> (in editorial-backend)
+      </div>
+      <div class="test-step">
+        <strong>2. Start frontend:</strong> <code>npm run dev</code>
+      </div>
+      <div class="test-step">
+        <strong>3. Navigate to:</strong> http://localhost:5173/dashboard/products
+      </div>
+      <div class="test-step">
+        <strong>4. Verify:</strong> Dashboard fetches 6 products from API
+      </div>
+      <div class="test-step">
+        <strong>5. Console:</strong> <code>📦 Data source: API</code>
+      </div>
+      <div class="test-step">
+        <strong>6. CRUD:</strong> Create/edit/delete persists in MySQL database
+      </div>
+    </div>
+
+    <div class="testing-box">
+      <div class="testing-title">🧪 Test Fallback (Backend Off)</div>
+      <div class="test-step">
+        <strong>1. Stop Laravel / Turn off XAMPP</strong>
+      </div>
+      <div class="test-step">
+        <strong>2. Refresh dashboard</strong>
+      </div>
+      <div class="test-step">
+        <strong>3. Verify:</strong> Still shows 6 products (from fallback to mock)
+      </div>
+      <div class="test-step">
+        <strong>4. Console:</strong> <code>⚠️ API request failed, falling back to mock data</code>
+      </div>
+      <div class="test-step">
+        <strong>5. No errors shown</strong> — graceful fallback
+      </div>
+    </div>
+
+    <div class="testing-box">
+      <div class="testing-title">🧪 Test Vercel (No Backend)</div>
+      <div class="test-step">
+        <strong>1.</strong> <code>.env</code> is in <code>.gitignore</code> → not deployed
+      </div>
+      <div class="test-step">
+        <strong>2.</strong> No <code>.env</code> on Vercel → <code>VITE_DATA_SOURCE</code> undefined → defaults to mock
+      </div>
+      <div class="test-step">
+        <strong>3.</strong> Dashboard shows mock products → works perfectly without backend
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Key Architecture Features</h3>
+
+    <h3>✓ Single Configuration</h3>
+    <p>No need to switch between <code>.env</code> files. The same codebase automatically handles both modes.</p>
+
+    <h3>✓ API with Fallback</h3>
+    <p>Tries API first with configurable timeout. Falls back to mock automatically if backend is down.</p>
+
+    <h3>✓ Loading States</h3>
+    <p>Dashboard shows spinner while loading, error message if something fails, with manual retry option.</p>
+
+    <h3>✓ Configurable Timeout</h3>
+    <p>Set <code>VITE_API_TIMEOUT</code> in <code>.env</code> (default: 1000ms). Controls how long to wait before fallback.</p>
+
+    <h3>✓ Vercel Ready</h3>
+    <p><code>.env</code> is gitignored. Vercel automatically uses mock mode without any configuration.</p>
+  </section>
+
+  <section>
+    <h2>Data Flow</h2>
+
+    <h3>API Mode (Default)</h3>
+    <pre>React Component
+    ↓
+productDataSource.getAll()
+    ↓
+Tries: fetch('http://localhost:8000/api/products')
+    ↓
+┌─ Success? → Return API data (real database)
+└─ Failed?  → Fallback to mock data (no error shown)</pre>
+
+    <h3>Mock Mode (Vercel)</h3>
+    <pre>React Component
+    ↓
+productDataSource.getAll()
+    ↓
+VITE_DATA_SOURCE is undefined → defaults to 'mock'
+    ↓
+Return MockProducts array (no fetch needed)
+    ↓
+Component renders products</pre>
+  </section>
+
+  <section>
+    <h2>Architectural Checkpoint Summary</h2>
+
+    <div class="checkpoint">
+      <div class="checkpoint-title">✓ Phase 4 Complete</div>
+      <p><strong>What This Enables:</strong></p>
+      <ul class="feature-list">
+        <li>Single configuration works everywhere</li>
+        <li>Vercel automatically uses mock mode (no <code>.env</code> = mock)</li>
+        <li>Local dev: API first, fallback to mock if backend down</li>
+        <li>Production: Set <code>VITE_API_URL</code> in hosting dashboard</li>
+        <li>Configurable timeout via <code>VITE_API_TIMEOUT</code></li>
+        <li>Foundation for connecting remaining pages</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Phase 6 Complete</h2>
+    <p>CRUD operations are now connected for all dashboard entities:</p>
+    <ul class="feature-list">
+      <li>Create, edit, and delete products</li>
+      <li>Create, edit, and delete services</li>
+      <li>Create, edit, and delete pricing plans</li>
+      <li>Shared <code>useEntityCrud</code> hook manages mutation state</li>
+      <li>Laravel validation feedback appears in the dashboard</li>
+      <li>Mock fallback remains available when the backend is unavailable</li>
+    </ul>
+    <p>Next: Phase 7 — production Laravel + MySQL deployment.</p>
+  </section>
+</main>

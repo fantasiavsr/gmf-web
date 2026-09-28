@@ -1,0 +1,39 @@
+<title>Production Deployment Guide</title>
+<style>
+:root{--bg:#fafaf8;--surface:#fff;--text:#1a1a1a;--muted:#666;--border:#e5e5e3;--accent:#fe7141;--code:#f3f3f1;--ok:#047857;--warn:#92400e}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0a;--surface:#1a1a1a;--text:#f5f5f5;--muted:#aaa;--border:#333;--code:#262625}}
+:root[data-theme="dark"]{--bg:#0a0a0a;--surface:#1a1a1a;--text:#f5f5f5;--muted:#aaa;--border:#333;--code:#262625}
+*{box-sizing:border-box}body{margin:0;padding:16px;background:var(--bg);color:var(--text);font:15px/1.6 system-ui,sans-serif}main,header{max-width:820px;margin:auto}header{padding:32px 0;border-bottom:1px solid var(--border);margin-bottom:32px}h1{font-size:34px;margin:0 0 8px}h2{font-size:23px;margin:34px 0 12px}h3{font-size:16px;margin:22px 0 8px}p{color:var(--muted)}.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin:14px 0}.ok{border-left:4px solid var(--ok)}.warn{border-left:4px solid #f59e0b}code,pre{font-family:ui-monospace,Consolas,monospace}code{background:var(--code);padding:2px 5px;border-radius:4px;font-size:13px}pre{background:var(--code);border:1px solid var(--border);border-radius:6px;padding:14px;overflow:auto;font-size:13px}li{margin:8px 0}.muted{color:var(--muted)}
+</style>
+<header><h1>Production Deployment Guide</h1><p>Phase 7 · Prepare Laravel + MySQL and Vercel without committing secrets or deploying from the repository.</p></header>
+<main>
+<section><h2>What Phase 7 completed</h2><div class="card ok"><strong>Production configuration is documented, not deployed.</strong><p>This phase adds CORS configuration, safe environment templates, deployment instructions, and frontend hosting guidance. Production domain, database credentials, HTTPS, and reverse-proxy rules remain operator-owned values.</p></div></section>
+<section><h2>Backend environment</h2><p>Copy the server template into the server's private <code>.env</code>. Never commit it.</p><pre>APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://api.example.com
+APP_KEY=&lt;generate privately on server&gt;
+
+DB_CONNECTION=mysql
+DB_HOST=&lt;production database host&gt;
+DB_PORT=3306
+DB_DATABASE=editorial_backend_prod
+DB_USERNAME=editorial_backend
+DB_PASSWORD=&lt;private password&gt;
+
+FRONTEND_URL=https://www.example.com
+LOG_LEVEL=error</pre><div class="card warn"><strong>Do not use local values in production.</strong><p>Use a dedicated MySQL user, not <code>root</code>. Do not expose passwords, APP_KEY, or private credentials in React or Vite variables.</p></div></section>
+<section><h2>Laravel deployment sequence</h2><ol><li>Provision PHP 8.2+, Composer, MySQL, and HTTPS.</li><li>Clone <code>editorial-backend</code>; point the web-server document root to <code>public/</code>.</li><li>Create the private <code>.env</code> and generate the key on the server.</li><li>Install and migrate safely:</li></ol><pre>composer install --no-dev --optimize-autoloader
+php artisan key:generate
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan storage:link</pre><p>Do not run <code>migrate:fresh</code> or destructive seed commands against production.</p></section>
+<section><h2>CORS and browser origins</h2><p>The API reads <code>FRONTEND_URL</code> and applies it to <code>/api/*</code>. Credentials are disabled because authentication is not in scope. Keep the origin exact; do not use a wildcard for a production API.</p><pre>Frontend origin: https://www.example.com
+API origin:      https://api.example.com/api</pre><p>Same-domain hosting still requires a reverse proxy: DNS alone does not route <code>/api/*</code> to Laravel.</p></section>
+<section><h2>Vercel frontend modes</h2><div class="card"><h3>Mock/demo mode</h3><p>Do not configure Vite API variables in Vercel. With no <code>.env</code>, the app defaults to mock data and remains independent of Laravel.</p></div><div class="card"><h3>Production API mode</h3><p>Set these as Vercel project environment variables, not committed files:</p><pre>VITE_DATA_SOURCE=api
+VITE_API_URL=https://api.example.com/api
+VITE_API_TIMEOUT=5000</pre></div><p>All <code>VITE_</code> values are public and must contain no secrets.</p></section>
+<section><h2>SPA routing</h2><p>React routes such as <code>/dashboard</code> need an SPA fallback to <code>/index.html</code>. Laravel API routes must remain separate under <code>/api/*</code> and must not be swallowed by the frontend fallback.</p></section>
+<section><h2>Verification checklist</h2><ul><li><code>php artisan test</code></li><li><code>php artisan route:list --path=api</code></li><li><code>curl https://api.example.com/api/health</code></li><li>Check CORS headers from the real frontend origin</li><li>Build the frontend with no local <code>.env</code> to verify mock fallback</li><li>Test API mode from Vercel only after the production API and HTTPS are ready</li></ul></section>
+</main>

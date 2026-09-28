@@ -1,0 +1,447 @@
+<title>Products API Service Layer</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --border: #e5e5e3;
+  --accent: #fe7141;
+  --accent-light: #fed4c7;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --code-bg: #f3f3f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #999999;
+    --border: #333333;
+    --code-bg: #262625;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f5;
+  --text-secondary: #999999;
+  --border: #333333;
+  --code-bg: #262625;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+}
+
+header {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status::before {
+  content: "●";
+  font-size: 12px;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+  color: var(--text);
+}
+
+p {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.endpoint {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.endpoint-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.method {
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.method.get { background: #dbeafe; color: #0369a1; }
+.method.post { background: #dcfce7; color: #166534; }
+.method.put { background: #fef3c7; color: #92400e; }
+.method.delete { background: #fee2e2; color: #991b1b; }
+
+.route {
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+  color: var(--accent);
+}
+
+.endpoint-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.params, .response {
+  margin-top: 12px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+code {
+  font-family: "Monaco", "Courier New", monospace;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  overflow-x: auto;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+}
+
+.info-box {
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.files {
+  display: grid;
+  gap: 12px;
+}
+
+.file {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.checklist {
+  list-style: none;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.checklist li::before {
+  content: "✓";
+  color: var(--success);
+  font-weight: 700;
+  min-width: 20px;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  .endpoint-header { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<header>
+  <h1>Products API Service Layer</h1>
+  <p class="subtitle">React fetch-based API client for Editorial Web backend</p>
+  <div class="status">Phase 3 — Complete · Extended in Phase 6</div>
+</header>
+
+<main>
+  <section>
+    <h2>Overview</h2>
+    <p>The API service layer provides a clean interface for the React frontend to communicate with the Laravel backend's REST API. All functions use native <code>fetch()</code> and return promises.</p>
+
+    <div class="info-box">
+      <strong>🚀 Quick Start:</strong> Import API functions directly for products, or use <code>src/services/data.js</code> from dashboard components. The data layer now supports API-first CRUD with automatic mock fallback for products, services, and pricing plans.
+    </div>
+  </section>
+
+  <section>
+    <h2>Files Created</h2>
+    <div class="files">
+      <div class="file">src/services/api/config.js</div>
+      <div class="file">src/services/api/products.js</div>
+      <div class="file">src/services/api/test.js</div>
+      <div class="file">src/services/api/catalog.js</div>
+      <div class="file">src/hooks/useEntityCrud.js</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>API Configuration</h2>
+    <h3>config.js</h3>
+    <p>Centralizes API settings and provides helper functions:</p>
+
+    <pre>import { apiConfig, getApiEndpoint, handleApiResponse } from './config.js'
+
+// Base URL determined by VITE_API_URL env var (defaults to http://localhost:8000/api)
+console.log(apiConfig.baseUrl)
+
+// Construct full endpoint URL
+const url = getApiEndpoint('/products')  // → http://localhost:8000/api/products
+
+// Handle responses (extracts JSON and throws on error)
+const data = await handleApiResponse(response)</pre>
+
+    <h3>Environment Variables</h3>
+    <p>Set in your local <code>.env</code> file (gitignored):</p>
+    <pre># .env (local development — create this file, it's gitignored)
+VITE_DATA_SOURCE=api
+VITE_API_URL=http://localhost:8000/api
+VITE_API_TIMEOUT=1000
+
+# Production (set in Vercel/hosting dashboard)
+# VITE_API_URL=https://mydomain.com/api</pre>
+  </section>
+
+  <section>
+    <h2>Products API Endpoints</h2>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="route">/products</span>
+      </div>
+      <div class="endpoint-desc">Fetch all products</div>
+      <div class="label">Returns</div>
+      <pre>// Array of product objects
+[
+  {
+    id: 1,
+    name: "Wireless Headphones",
+    type: "Electronics",
+    sku: "WH-001",
+    price: "$349",
+    available: 24,
+    status: "active",
+    description: "Premium wireless headphones with noise cancellation.",
+    created_at: "2026-09-14T06:23:52.000000Z",
+    updated_at: "2026-09-14T06:23:52.000000Z"
+  }
+  // ...
+]</pre>
+      <div class="label">Usage</div>
+      <pre>import { getProducts } from './services/api/products.js'
+
+const products = await getProducts()</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method get">GET</span>
+        <span class="route">/products/{id}</span>
+      </div>
+      <div class="endpoint-desc">Fetch a single product by ID</div>
+      <div class="label">Usage</div>
+      <pre>import { getProduct } from './services/api/products.js'
+
+const product = await getProduct(1)</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method post">POST</span>
+        <span class="route">/products</span>
+      </div>
+      <div class="endpoint-desc">Create a new product</div>
+      <div class="label">Usage</div>
+      <pre>import { createProduct } from './services/api/products.js'
+
+const newProduct = await createProduct({
+  name: "Wireless Mouse",
+  type: "Electronics",
+  sku: "WM-007",
+  price: "$39",
+  available: 85,
+  status: "active",
+  description: "Ergonomic wireless mouse"
+})</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method put">PUT</span>
+        <span class="route">/products/{id}</span>
+      </div>
+      <div class="endpoint-desc">Update an existing product</div>
+      <div class="label">Usage</div>
+      <pre>import { updateProduct } from './services/api/products.js'
+
+const updated = await updateProduct(1, {
+  available: 15,
+  price: "$299"
+})</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="method delete">DELETE</span>
+        <span class="route">/products/{id}</span>
+      </div>
+      <div class="endpoint-desc">Delete a product</div>
+      <div class="label">Usage</div>
+      <pre>import { deleteProduct } from './services/api/products.js'
+
+const result = await deleteProduct(1)
+// Response: { message: "Product deleted successfully" }</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Error Handling</h2>
+    <p>All API functions throw errors that can be caught with try/catch:</p>
+    <pre>try {
+  const products = await getProducts()
+} catch (error) {
+  console.error('Failed to fetch products:', error.message)
+  // Handle error: show toast, retry, fallback to mock data, etc.
+}</pre>
+  </section>
+
+  <section>
+    <h2>Testing the API Layer</h2>
+    <p>A test file is included at <code>src/services/api/test.js</code> that verifies all endpoints work:</p>
+
+    <pre>// In browser console or a test runner:
+import { runApiTests } from './services/api/test.js'
+
+await runApiTests()</pre>
+
+    <p>The test suite will:</p>
+    <ul class="checklist">
+      <li>Fetch all products</li>
+      <li>Fetch a single product</li>
+      <li>Create a new product</li>
+      <li>Update the product</li>
+      <li>Delete the product</li>
+      <li>Report success or failure for each step</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Current Status</h2>
+    <p><strong>Phase 6 — CRUD Operations</strong> is complete:</p>
+    <ul class="checklist">
+      <li>Products, services, and pricing plans support create, update, and delete</li>
+      <li>Dashboard forms use the shared EntityFormModal and EntityDeleteDialog</li>
+      <li>Laravel validation errors are preserved for UI feedback</li>
+      <li>API failures fall back to mock data automatically</li>
+    </ul>
+    <p>Next: Phase 7 — production Laravel and MySQL deployment.</p>
+  </section>
+
+  <section>
+    <h2>Architecture</h2>
+    <pre>React Component
+       ↓
+  Data Abstraction (src/services/data.js)
+       ↓
+  ┌─────────────────────────────────┐
+  │ Try API first (with timeout)    │
+  │         ↓                       │
+  │   fetch() to Laravel API        │
+  │         ↓                       │
+  │  Success? → Return API data     │
+  │  Failed?  → Fallback to mock    │
+  └─────────────────────────────────┘</pre>
+
+    <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">The data abstraction layer (Phase 4) handles fallback automatically. Components just call <code>productDataSource.getAll()</code> and get data regardless of which source is active.</p>
+  </section>
+</main>

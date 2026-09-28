@@ -1,0 +1,212 @@
+<title>Editorial Web — Documentation</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --text: #1a1a1a;
+  --text-secondary: #666666;
+  --border: #e5e5e3;
+  --accent: #fe7141;
+  --accent-light: #fed4c7;
+  --success: #10b981;
+  --code-bg: #f3f3f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a;
+    --surface: #1a1a1a;
+    --text: #f5f5f5;
+    --text-secondary: #999999;
+    --border: #333333;
+    --code-bg: #262625;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f5;
+  --text-secondary: #999999;
+  --border: #333333;
+  --code-bg: #262625;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 16px;
+}
+
+header {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+.subtitle { font-size: 16px; color: var(--text-secondary); }
+
+main {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+  transition: border-color 0.2s;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.badge.phase {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+
+.quick-ref {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.quick-ref h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+code {
+  font-family: "Monaco", "Courier New", monospace;
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: "Monaco", "Courier New", monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+}
+</style>
+
+<header>
+  <h1>Documentation</h1>
+  <p class="subtitle">Editorial Web — React + Laravel API</p>
+</header>
+
+<main>
+  <h2>Guides</h2>
+
+  <a href="API_SERVICE_LAYER.html" class="card">
+    <div class="card-title">Products API Service Layer <span class="badge phase">Phase 3</span></div>
+    <div class="card-desc">Fetch-based API client for products. Endpoints, usage examples, error handling.</div>
+  </a>
+
+  <a href="PHASE4_MOCK_API_SWITCHING.html" class="card">
+    <div class="card-title">Mock/API Switching Architecture <span class="badge phase">Phase 4</span></div>
+    <div class="card-desc">How the data abstraction layer works. API with fallback to mock. Testing both modes.</div>
+  </a>
+
+  <div class="card" style="border-color: var(--success);">
+    <div class="card-title">CRUD Operations <span class="badge phase">Phase 6</span></div>
+    <div class="card-desc">Products, services, and pricing plans now support create, edit, delete, validation feedback, and API-to-mock fallback through the dashboard.</div>
+  </div>
+
+  <a href="PHASE7_PRODUCTION_DEPLOYMENT.html" class="card">
+    <div class="card-title">Production Deployment Guide <span class="badge phase">Phase 7</span></div>
+    <div class="card-desc">Laravel + MySQL production preparation, CORS, HTTPS, Vercel variables, SPA routing, and safe deployment sequence.</div>
+  </a>
+
+  <h2>Quick Reference</h2>
+
+  <div class="quick-ref">
+    <h3>Environment Variables</h3>
+    <pre>VITE_DATA_SOURCE=api          # 'api' or 'mock'
+VITE_API_URL=http://localhost:8000/api
+VITE_API_TIMEOUT=1000          # ms before fallback</pre>
+    <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">Note: <code>.env</code> is gitignored. Create it locally. Vercel uses mock mode automatically.</p>
+  </div>
+
+  <div class="quick-ref">
+    <h3>Start Development</h3>
+    <pre># Terminal 1: Laravel backend
+cd ../editorial-backend
+php artisan serve --port=8000
+
+# Terminal 2: React frontend
+npm run dev</pre>
+  </div>
+
+  <div class="quick-ref">
+    <h3>File Structure</h3>
+    <pre>src/services/
+├── data.js              ← Abstraction layer (mock/API switching)
+└── api/
+    ├── config.js        ← API URL, timeout, headers
+    ├── products.js      ← Product API functions
+    ├── catalog.js       ← Services/pricing API functions
+    └── test.js          ← API testing utilities
+
+src/hooks/
+└── useEntityCrud.js     ← Shared dashboard CRUD state</pre>
+  </div>
+
+  <h2>Archived Docs</h2>
+  <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">Old docs moved to <code>docs/backup/</code>. Outdated but kept for reference.</p>
+</main>
