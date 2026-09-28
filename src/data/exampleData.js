@@ -149,8 +149,8 @@ export const MockProducts = [
 ];
 
 export const MockProfile = {
-  name: "Reisalin Stout",
-  email: "ryza@atelier.com",
+  name: "Kei Shirogane",
+  email: "shiroe@atelier.com",
   phone: "+1 (555) 234-5678",
   address: "67 village of Rasenboden",
   city: "Kurken Island",
