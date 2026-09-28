@@ -42,10 +42,16 @@ export default function Hero() {
         loop
         playsInline
         className="absolute inset-0 w-full h-full object-cover"
+        preload="metadata"
+        poster="/herobg.jpg"
       >
         <source src="/hero.mp4" type="video/mp4" />
         {/* Fallback image if video doesn't load */}
-        <img src="/herobg.jpg" alt="Hero Background" className="w-full h-full object-cover" />
+        {/* <img
+          src="/herobg.jpg"
+          alt="Hero Background"
+          className="w-full h-full object-cover"
+        /> */}
       </video>
 
       {/* Overlay for better text readability */}
