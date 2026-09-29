@@ -318,11 +318,11 @@ export const MockCertificates = [
     status: "active",
     user_id: 2,
     data: {
-      welderType: "welder",
-      wpsNo: "WPS-GMS-AWS-002",
-      wpsRevision: "1",
+      welder_type: "welder",
+      wps_no: "WPS-GMS-AWS-002",
+      wps_revision: "1",
       qualification: {
-        processType: {
+        process_type: {
           actual: "SMAW + FCAW-GS",
           qualification: "SMAW + FCAW-GS",
         },
@@ -330,7 +330,7 @@ export const MockCertificates = [
           actual: "single electrode",
           qualification: "SMAW + FCAW-GS",
         },
-        currentPolarity: {
+        current_polarity: {
           actual: "DC EP + DC EN",
           qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
         },
@@ -338,7 +338,7 @@ export const MockCertificates = [
           actual: "3G & 4G",
           qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
         },
-        weldinProgression: {
+        welding_progression: {
           actual: "Uphill",
           qualification: "Uphill",
         },
@@ -346,97 +346,102 @@ export const MockCertificates = [
           actual: "Yes [FCAW-GS]",
           qualification: "With [FCAW-GS]",
         },
-        materialSpecification: {
+        material_specification: {
           actual: "ASTM A36",
           qualification: "Any",
         },
-        baseMetalThickness: {
+        base_metal: {
           actual: "16 MM",
           qualification: "5 mm to 32 mm",
         },
+        thickness_plate: {
+          actual: "16 MM",
+          qualification: "5 mm to 32 mm",
+        },
+        thickness_plate_fillet: {
+          actual: null,
+          qualification: "Any thickness",
+        },
+        thickness_pipe_groove: {
+          actual: null,
+          qualification: "5 mm to unlimited",
+        },
+        thickness_pipe_fillet: {
+          actual: null,
+          qualification: "Any thickness",
+        },
+        diameter_pipe_groove: {
+          actual: null,
+          qualification: "24 to above",
+        },
+        diameter_pipe_fillet: {
+          actual: null,
+          qualification: "any size",
+        },
+        filler_metal_spec: {
+          actual: "A 5.20 [FCAW-GS]",
+          qualification: "F6 [FCAW-GS]",
+        },
+        filler_metal_aws_class: {
+          actual: "E71T-1C",
+          qualification: "F6 [FCAW-GS]",
+        },
+        filler_metal_f_no: {
+          actual: "F6 [FCAW-GS]",
+          qualification: "F6 [FCAW-GS]",
+        },
+        gas_flux_type: {
+          actual: "co2 [FCAW-GS]",
+          qualification: "co2 [FCAW-GS]",
+        },
+        others: {
+          actual: null,
+          qualification: "co2 [FCAW-GS]",
+        },
       },
-      visualExamination: {
-        completeWeldResult: "acceptable",
+      visual_examination: {
+        complete_weld_result: "acceptable",
       },
-      guideBend: {
-        sb1_3g: "acceptable",
-        sb2_3g: "acceptable",
-        sb1_4g: "acceptable",
-        sb2_4g: "acceptable",
+      guide_bend: {
+        sb_1_3g: "acceptable",
+        sb_2_3g: "acceptable",
+        sb_1_4g: "acceptable",
+        sb_2_4g: "acceptable",
       },
-      mechanicalTest: {
-        conductedBy: "John Welder",
-        labTestNo: "1018/GMF-WQT/2025 & 1019/GMF-WQT/2025",
+      mechanical_test: {
+        conducted_by: "John Welder",
+        lab_test_no: "1018/GMF-WQT/2025 & 1019/GMF-WQT/2025",
       },
+      ultrasonic_test: {
+        report_no: null,
+        technician: "ASNT level II",
+        results: null,
+        company: null,
+      },
+      supervision: {
+        welding_supervised_by: "John Welder",
+        company: null,
+      },
+      organizations: [
+        {
+          name: "PT GOLDEN MELAINDO FABRIKASI",
+          signed_by: "GMS Admin",
+        },
+        {
+          name: "WELDING DEPARTMENT",
+          signed_by: "Welding Supervisor",
+        },
+        {
+          name: "THIRD PARTY",
+          signed_by: "-",
+        },
+      ],
     },
   },
   {
     id: 2,
     certificate_no: "GMF/WQT/AWS/0613",
-    welder_name: "John Welder",
-    welder_identification_no: "GMF-533",
-    type: "Welder Qualification Test Record",
-    issue_date: "2026-10-15",
-    test_date: "2025-05-12",
-    status: "active",
-    user_id: 3,
-    data: {
-      welderType: "welder",
-      wpsNo: "WPS-GMS-AWS-003",
-      wpsRevision: "2",
-      qualification: {
-        processType: {
-          actual: "GTAW + SMAW",
-          qualification: "GTAW + SMAW",
-        },
-        electrode: {
-          actual: "multiple electrodes",
-          qualification: "GTAW + SMAW",
-        },
-        currentPolarity: {
-          actual: "AC + DC EN",
-          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
-        },
-        position: {
-          actual: "2G & 3G",
-          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
-        },
-        weldinProgression: {
-          actual: "Downhill",
-          qualification: "Downhill",
-        },
-        backing: {
-          actual: "No",
-          qualification: "Without",
-        },
-        materialSpecification: {
-          actual: "ASTM A516 Grade 70",
-          qualification: "Any",
-        },
-        baseMetalThickness: {
-          actual: "12 MM",
-          qualification: "5 mm to 32 mm",
-        },
-      },
-      visualExamination: {
-        completeWeldResult: "acceptable",
-      },
-      guideBend: {
-        sb1_2g: "acceptable",
-        sb2_2g: "acceptable",
-        sb1_3g: "acceptable",
-        sb2_3g: "acceptable",
-      },
-      mechanicalTest: {
-        conductedBy: "Jane Welder",
-        labTestNo: "1020/GMF-WQT/2025 & 1021/GMF-WQT/2025",
-      },
-    },
-  },
-  {
-    id: 3,
-    certificate_no: "GMF/WQT/AWS/0614",
-    welder_name: "Jene Welder",
+    welder_name: "Jane Welder",
     welder_identification_no: "GMF-534",
     type: "Welder Qualification Test Record",
     issue_date: "2026-10-15",
@@ -444,11 +449,11 @@ export const MockCertificates = [
     status: "active",
     user_id: 3,
     data: {
-      welderType: "welder",
-      wpsNo: "WPS-GMS-AWS-003",
-      wpsRevision: "2",
+      welder_type: "welder",
+      wps_no: "WPS-GMS-AWS-003",
+      wps_revision: "2",
       qualification: {
-        processType: {
+        process_type: {
           actual: "GTAW + SMAW",
           qualification: "GTAW + SMAW",
         },
@@ -456,7 +461,7 @@ export const MockCertificates = [
           actual: "multiple electrodes",
           qualification: "GTAW + SMAW",
         },
-        currentPolarity: {
+        current_polarity: {
           actual: "AC + DC EN",
           qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
         },
@@ -464,7 +469,7 @@ export const MockCertificates = [
           actual: "2G & 3G",
           qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
         },
-        weldinProgression: {
+        welding_progression: {
           actual: "Downhill",
           qualification: "Downhill",
         },
@@ -472,28 +477,60 @@ export const MockCertificates = [
           actual: "No",
           qualification: "Without",
         },
-        materialSpecification: {
+        material_specification: {
           actual: "ASTM A516 Grade 70",
           qualification: "Any",
         },
-        baseMetalThickness: {
+        base_metal: {
           actual: "12 MM",
           qualification: "5 mm to 32 mm",
         },
+        thickness_plate: {
+          actual: "12 MM",
+          qualification: "5 mm to 32 mm",
+        },
+        filler_metal_spec: {
+          actual: "A 5.1 [SMAW]",
+          qualification: "F3 [SMAW]",
+        },
+        gas_flux_type: {
+          actual: "None [SMAW]",
+          qualification: "None [SMAW]",
+        },
       },
-      visualExamination: {
-        completeWeldResult: "acceptable",
+      visual_examination: {
+        complete_weld_result: "acceptable",
       },
-      guideBend: {
-        sb1_2g: "acceptable",
-        sb2_2g: "acceptable",
-        sb1_3g: "acceptable",
-        sb2_3g: "acceptable",
+      guide_bend: {
+        sb_1_2g: "acceptable",
+        sb_2_2g: "acceptable",
+        sb_1_3g: "acceptable",
+        sb_2_3g: "acceptable",
       },
-      mechanicalTest: {
-        conductedBy: "Jane Welder",
-        labTestNo: "1020/GMF-WQT/2025 & 1021/GMF-WQT/2025",
+      mechanical_test: {
+        conducted_by: "Jane Welder",
+        lab_test_no: "1020/GMF-WQT/2025 & 1021/GMF-WQT/2025",
       },
+      ultrasonic_test: {
+        report_no: null,
+        technician: "ASNT level III",
+        results: null,
+        company: null,
+      },
+      supervision: {
+        welding_supervised_by: "Jane Welder",
+        company: null,
+      },
+      organizations: [
+        {
+          name: "PT GOLDEN MELAINDO FABRIKASI",
+          signed_by: "GMS Admin",
+        },
+        {
+          name: "WELDING DEPARTMENT",
+          signed_by: "Welding Supervisor",
+        },
+      ],
     },
   },
 ];

@@ -33,61 +33,10 @@ function formatCertificateValue(value) {
   if (typeof value === "boolean") {
     return value ? "Yes" : "No";
   }
-  return String(value);
-}
-
-function renderCertificateRows(value, path = "certificate") {
-  const entries = Array.isArray(value)
-    ? value.map((entry, index) => [`entry-${index + 1}`, entry])
-    : Object.entries(value ?? {});
-
-  if (entries.length === 0) {
-    return (
-      <tr key={path}>
-        <td
-          colSpan={2}
-          className="px-4 py-3 text-sm text-primary-black/50 dark:text-primary-white/50"
-        >
-          No values recorded
-        </td>
-      </tr>
-    );
+  if (typeof value === "object") {
+    return "[Complex Data]";
   }
-
-  return entries.flatMap(([key, entry], index) => {
-    const label = Array.isArray(value)
-      ? `Entry ${index + 1}`
-      : formatCertificateLabel(key);
-    const rowPath = `${path}.${key}`;
-
-    if (entry !== null && typeof entry === "object") {
-      return [
-        <tr key={`${rowPath}-heading`}>
-          <th
-            colSpan={2}
-            className="bg-primary-black/5 px-4 py-3 text-left font-semibold text-primary-black dark:bg-primary-white/5 dark:text-primary-white"
-          >
-            {label}
-          </th>
-        </tr>,
-        ...renderCertificateRows(entry, rowPath),
-      ];
-    }
-
-    return (
-      <tr key={rowPath}>
-        <th
-          scope="row"
-          className="w-1/3 px-4 py-3 text-left align-top font-medium text-primary-black/70 dark:text-primary-white/70"
-        >
-          {label}
-        </th>
-        <td className="whitespace-pre-wrap wrap-break-word px-4 py-3 text-primary-black dark:text-primary-white">
-          {formatCertificateValue(entry)}
-        </td>
-      </tr>
-    );
-  });
+  return String(value);
 }
 
 export default function CertificateVerificationPage() {
@@ -360,59 +309,65 @@ export default function CertificateVerificationPage() {
                 </div>
               </div>
 
-              {/* Certificate Info */}
+              {/* Certificate Info - Simple Fields Only */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Certificate Number
-                  </label>
-                  <p className="text-lg font-semibold text-primary-black dark:text-primary-white">
-                    {selectedCertificate.certificate_no}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Welder Name
-                  </label>
-                  <p className="text-lg font-semibold text-primary-black dark:text-primary-white">
-                    {selectedCertificate.welder_name}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Welder ID
-                  </label>
-                  <p className="text-lg font-semibold text-primary-black dark:text-primary-white">
-                    {selectedCertificate.welder_identification_no}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Certificate Type
-                  </label>
-                  <p className="text-lg font-semibold text-primary-black dark:text-primary-white">
-                    {selectedCertificate.type}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Test Date
-                  </label>
-                  <p className="text-lg font-semibold text-primary-black dark:text-primary-white">
-                    {new Date(
+                {[
+                  {
+                    label: "Certificate Number",
+                    value: selectedCertificate.certificate_no,
+                  },
+                  {
+                    label: "Welder Name",
+                    value: selectedCertificate.welder_name,
+                  },
+                  {
+                    label: "Welder ID",
+                    value: selectedCertificate.welder_identification_no,
+                  },
+                  {
+                    label: "Certificate Type",
+                    value: selectedCertificate.type,
+                  },
+                  {
+                    label: "Test Date",
+                    value: new Date(
                       selectedCertificate.test_date,
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                    Status
-                  </label>
-                  <p className="text-lg font-semibold text-green-600 dark:text-green-400">
-                    {selectedCertificate.status.charAt(0).toUpperCase() +
-                      selectedCertificate.status.slice(1)}
-                  </p>
-                </div>
+                    ).toLocaleDateString(),
+                  },
+                  {
+                    label: "Status",
+                    value:
+                      selectedCertificate.status.charAt(0).toUpperCase() +
+                      selectedCertificate.status.slice(1),
+                    isStatus: true,
+                  },
+                  {
+                    label: "Issue Date",
+                    value:
+                      selectedCertificate.issue_date &&
+                      new Date(
+                        selectedCertificate.issue_date,
+                      ).toLocaleDateString(),
+                  },
+                ].map(
+                  (field) =>
+                    field.value && (
+                      <div key={field.label}>
+                        <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
+                          {field.label}
+                        </label>
+                        <p
+                          className={`text-lg font-semibold ${
+                            field.isStatus
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-primary-black dark:text-primary-white"
+                          }`}
+                        >
+                          {field.value}
+                        </p>
+                      </div>
+                    ),
+                )}
               </div>
 
               {/* Access Info */}
@@ -455,37 +410,480 @@ export default function CertificateVerificationPage() {
             <div className="bg-primary-white dark:bg-primary-dark-card rounded-lg shadow-sm p-8">
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-primary-black dark:text-primary-white mb-2">
-                  Certificate Details
-                </h2>
-                <p className="text-primary-black/60 dark:text-primary-white/60">
                   Welder Qualification Test Record (WQT)
-                </p>
+                </h2>
               </div>
 
-              {/* Basic Info */}
               <div className="space-y-8">
+                {/* 1. Certificate Information - Compact Grid */}
                 <div>
                   <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
-                    Complete Certificate Record
+                    Certificate Information
                   </h3>
-                  <div className="overflow-x-auto border-y border-primary-black/10 dark:border-primary-white/10">
-                    <table className="w-full min-w-120 border-collapse text-sm">
-                      <tbody className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
-                        {renderCertificateRows(
-                          Object.fromEntries(
-                            Object.entries(selectedCertificate).filter(
-                              ([key]) =>
-                                ![
-                                  "isPreview",
-                                  "isOwner",
-                                  "accessDenied",
-                                ].includes(key),
-                            ),
-                          ),
-                        )}
-                      </tbody>
-                    </table>
+                  <div className="space-y-3">
+                    {/* First row: Certificate No, Issue Date, Test Date, Type */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Certificate No.
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.certificate_no || "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Issue Date
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.issue_date
+                            ? new Date(selectedCertificate.issue_date).toLocaleDateString()
+                            : "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Date Test
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.test_date
+                            ? new Date(selectedCertificate.test_date).toLocaleDateString()
+                            : "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Type of Welder
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.data?.welder_type
+                            ? formatCertificateLabel(selectedCertificate.data.welder_type)
+                            : "-"}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Second row: Welder Name, ID, WPS No, Rev */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Welder Name
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.welder_name || "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Identification No.
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.welder_identification_no || "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          WPS No.
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.data?.wps_no || "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-1">
+                          Rev.
+                        </p>
+                        <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
+                          {selectedCertificate.data?.wps_revision || "-"}
+                        </p>
+                      </div>
+                    </div>
                   </div>
+                </div>
+
+                {/* 2. Qualification Table - Main Table */}
+                {selectedCertificate.data?.qualification && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
+                      Qualification
+                    </h3>
+                    <div className="overflow-x-auto border border-primary-black/10 dark:border-primary-white/10 rounded-lg">
+                      <table className="w-full border-collapse text-xs md:text-sm">
+                        <thead>
+                          <tr className="bg-primary-black/5 dark:bg-primary-white/5">
+                            <th className="px-3 py-2 text-left font-semibold text-primary-black dark:text-primary-white border-b border-primary-black/10 dark:border-primary-white/10">
+                              Variables
+                            </th>
+                            <th className="px-3 py-2 text-left font-semibold text-primary-black dark:text-primary-white border-b border-primary-black/10 dark:border-primary-white/10">
+                              Record Actual
+                            </th>
+                            <th className="px-3 py-2 text-left font-semibold text-primary-black dark:text-primary-white border-b border-primary-black/10 dark:border-primary-white/10">
+                              Qualification Range
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
+                          {/* Simple rows */}
+                          {[
+                            ["Process / Type", "process_type"],
+                            ["Electrode", "electrode"],
+                            ["Current / Polarity", "current_polarity"],
+                            ["Position", "position"],
+                            ["Welding Progression", "welding_progression"],
+                            ["Backing", "backing"],
+                            ["Material / Specification", "material_specification"],
+                            ["Base Metal", "base_metal"],
+                          ].map(([label, key]) => (
+                            <tr key={key}>
+                              <td className="px-3 py-2 font-medium text-primary-black dark:text-primary-white">
+                                {label}
+                              </td>
+                              <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                                {selectedCertificate.data.qualification[key]?.actual || "-"}
+                              </td>
+                              <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                                {selectedCertificate.data.qualification[key]?.qualification || "-"}
+                              </td>
+                            </tr>
+                          ))}
+
+                          {/* Thickness Plate Group */}
+                          <tr className="bg-primary-black/2 dark:bg-primary-white/5">
+                            <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
+                              Thickness Plate
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_plate?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_plate?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Fillet
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_plate_fillet?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_plate_fillet?.qualification || "-"}
+                            </td>
+                          </tr>
+
+                          {/* Thickness Pipe Group */}
+                          <tr className="bg-primary-black/2 dark:bg-primary-white/5">
+                            <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
+                              Thickness Pipe
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Groove
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_pipe_groove?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_pipe_groove?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Fillet
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_pipe_fillet?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.thickness_pipe_fillet?.qualification || "-"}
+                            </td>
+                          </tr>
+
+                          {/* Diameter Pipe Group */}
+                          <tr className="bg-primary-black/2 dark:bg-primary-white/5">
+                            <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
+                              Diameter Pipe
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Groove
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.diameter_pipe_groove?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.diameter_pipe_groove?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Fillet
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.diameter_pipe_fillet?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.diameter_pipe_fillet?.qualification || "-"}
+                            </td>
+                          </tr>
+
+                          {/* Filler Metal Group */}
+                          <tr className="bg-primary-black/2 dark:bg-primary-white/5">
+                            <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
+                              Filler Metal
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ Spec.
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_spec?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_spec?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ AWS Class
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_aws_class?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_aws_class?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
+                              ↳ F No.
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_f_no?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.filler_metal_f_no?.qualification || "-"}
+                            </td>
+                          </tr>
+
+                          {/* Gas / Flux and Others */}
+                          <tr>
+                            <td className="px-3 py-2 font-medium text-primary-black dark:text-primary-white">
+                              Gas / Flux Type
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.gas_flux_type?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.gas_flux_type?.qualification || "-"}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="px-3 py-2 font-medium text-primary-black dark:text-primary-white">
+                              Others
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.others?.actual || "-"}
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              {selectedCertificate.data.qualification.others?.qualification || "-"}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Small Test Sections - Side by Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Visual Examination */}
+                  {selectedCertificate.data?.visual_examination && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Visual Examination
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg overflow-hidden">
+                        <div className="flex justify-between items-center px-4 py-3 bg-primary-black/2 dark:bg-primary-white/5 border-b border-primary-black/10 dark:border-primary-white/10">
+                          <span className="font-medium text-primary-black/70 dark:text-primary-white/70">
+                            Complete Weld Result
+                          </span>
+                          <span className="font-semibold text-primary-black dark:text-primary-white">
+                            {selectedCertificate.data.visual_examination.complete_weld_result || "-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mechanical Test */}
+                  {selectedCertificate.data?.mechanical_test && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Mechanical Test
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg divide-y divide-primary-black/10 dark:divide-primary-white/10 overflow-hidden">
+                        <div className="flex justify-between items-start px-4 py-3 bg-primary-black/2 dark:bg-primary-white/5">
+                          <span className="font-medium text-primary-black/70 dark:text-primary-white/70">
+                            Conducted By
+                          </span>
+                          <span className="font-semibold text-primary-black dark:text-primary-white text-right">
+                            {selectedCertificate.data.mechanical_test.conducted_by || "-"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-start px-4 py-3">
+                          <span className="font-medium text-primary-black/70 dark:text-primary-white/70">
+                            Lab Test No.
+                          </span>
+                          <span className="font-semibold text-primary-black dark:text-primary-white text-right max-w-xs">
+                            {selectedCertificate.data.mechanical_test.lab_test_no || "-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Guide Bend and Ultrasonic Tests - Side by Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Guide Bend Test */}
+                  {selectedCertificate.data?.guide_bend && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Guide Bend Test
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg divide-y divide-primary-black/10 dark:divide-primary-white/10 overflow-hidden">
+                        {[
+                          { label: "SB 1/3G", key: "sb_1_3g" },
+                          { label: "SB 2/3G", key: "sb_2_3g" },
+                          { label: "SB 1/4G", key: "sb_1_4g" },
+                          { label: "SB 2/4G", key: "sb_2_4g" },
+                        ].map((item, idx) => (
+                          <div
+                            key={item.key}
+                            className={`flex justify-between items-center px-4 py-2 ${
+                              idx % 2 === 0
+                                ? "bg-primary-black/2 dark:bg-primary-white/5"
+                                : ""
+                            }`}
+                          >
+                            <span className="font-medium text-primary-black/70 dark:text-primary-white/70 text-sm">
+                              {item.label}
+                            </span>
+                            <span className="font-semibold text-primary-black dark:text-primary-white text-sm">
+                              {selectedCertificate.data.guide_bend[item.key] || "-"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Ultrasonic Test */}
+                  {selectedCertificate.data?.ultrasonic_test && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Ultrasonic Test
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg divide-y divide-primary-black/10 dark:divide-primary-white/10 overflow-hidden">
+                        {[
+                          { label: "Report No.", key: "report_no" },
+                          { label: "Technician", key: "technician" },
+                          { label: "Results", key: "results" },
+                          { label: "Company", key: "company" },
+                        ].map((item, idx) => (
+                          <div
+                            key={item.key}
+                            className={`flex justify-between items-start px-4 py-2 ${
+                              idx % 2 === 0
+                                ? "bg-primary-black/2 dark:bg-primary-white/5"
+                                : ""
+                            }`}
+                          >
+                            <span className="font-medium text-primary-black/70 dark:text-primary-white/70 text-sm">
+                              {item.label}
+                            </span>
+                            <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right max-w-xs">
+                              {selectedCertificate.data.ultrasonic_test[item.key] || "-"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 5. Welding Supervision and Organization - Side by Side */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Welding Supervision */}
+                  {selectedCertificate.data?.supervision && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Welding Supervision
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg divide-y divide-primary-black/10 dark:divide-primary-white/10 overflow-hidden">
+                        <div className="flex justify-between items-start px-4 py-3 bg-primary-black/2 dark:bg-primary-white/5">
+                          <span className="font-medium text-primary-black/70 dark:text-primary-white/70 text-sm">
+                            Supervised By
+                          </span>
+                          <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right">
+                            {selectedCertificate.data.supervision.welding_supervised_by || "-"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-start px-4 py-3">
+                          <span className="font-medium text-primary-black/70 dark:text-primary-white/70 text-sm">
+                            Company
+                          </span>
+                          <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right">
+                            {selectedCertificate.data.supervision.company || "-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Organization */}
+                  {selectedCertificate.data?.organizations && Array.isArray(selectedCertificate.data.organizations) && (
+                    <div>
+                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                        Organization
+                      </h3>
+                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg overflow-hidden">
+                        <div className="bg-primary-black/2 dark:bg-primary-white/5 border-b border-primary-black/10 dark:border-primary-white/10 grid grid-cols-2">
+                          <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider">
+                            Organization
+                          </div>
+                          <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider border-l border-primary-black/10 dark:border-primary-white/10">
+                            Signed By
+                          </div>
+                        </div>
+                        <div className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
+                          {selectedCertificate.data.organizations.map((org, idx) => (
+                            <div key={idx} className="grid grid-cols-2">
+                              <div className={`px-3 py-2 text-sm ${idx % 2 === 0 ? "bg-primary-black/2 dark:bg-primary-white/5" : ""}`}>
+                                {org.name || "-"}
+                              </div>
+                              <div
+                                className={`px-3 py-2 text-sm border-l border-primary-black/10 dark:border-primary-white/10 ${
+                                  idx % 2 === 0 ? "bg-primary-black/2 dark:bg-primary-white/5" : ""
+                                }`}
+                              >
+                                {org.signed_by || "-"}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Back Button */}
