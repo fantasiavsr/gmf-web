@@ -387,16 +387,26 @@ export default function CertificateVerificationPage() {
                     className="text-primary-orange shrink-0 mt-1"
                     size={20}
                   />
-                  <div>
+                  <div className="flex-1">
                     <p className="font-medium text-primary-orange mb-3">
                       Log in to view full certificate details
                     </p>
-                    <a
-                      href="/login"
-                      className="inline-block px-4 py-2 bg-primary-orange text-primary-white rounded hover:bg-primary-orange/90 transition-colors text-sm font-medium"
-                    >
-                      Log In
-                    </a>
+                    <div className="flex gap-2 flex-col sm:flex-row">
+                      <a
+                        href="/login"
+                        className="inline-block px-4 py-2 bg-primary-orange text-primary-white rounded hover:bg-primary-orange/90 transition-colors text-sm font-medium"
+                      >
+                        Log In
+                      </a>
+                      {usingMockData && (
+                        <button
+                          onClick={() => setShowDetails(true)}
+                          className="inline-block px-4 py-2 bg-primary-white dark:bg-primary-dark-card text-primary-orange rounded hover:bg-primary-white/90 transition-colors text-sm font-medium border border-primary-orange"
+                        >
+                          Preview Mock Data
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -437,7 +447,9 @@ export default function CertificateVerificationPage() {
                         </p>
                         <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
                           {selectedCertificate.issue_date
-                            ? new Date(selectedCertificate.issue_date).toLocaleDateString()
+                            ? new Date(
+                                selectedCertificate.issue_date,
+                              ).toLocaleDateString()
                             : "-"}
                         </p>
                       </div>
@@ -447,7 +459,9 @@ export default function CertificateVerificationPage() {
                         </p>
                         <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
                           {selectedCertificate.test_date
-                            ? new Date(selectedCertificate.test_date).toLocaleDateString()
+                            ? new Date(
+                                selectedCertificate.test_date,
+                              ).toLocaleDateString()
                             : "-"}
                         </p>
                       </div>
@@ -457,7 +471,9 @@ export default function CertificateVerificationPage() {
                         </p>
                         <p className="text-sm font-semibold text-primary-black dark:text-primary-white">
                           {selectedCertificate.data?.welder_type
-                            ? formatCertificateLabel(selectedCertificate.data.welder_type)
+                            ? formatCertificateLabel(
+                                selectedCertificate.data.welder_type,
+                              )
                             : "-"}
                         </p>
                       </div>
@@ -530,7 +546,10 @@ export default function CertificateVerificationPage() {
                             ["Position", "position"],
                             ["Welding Progression", "welding_progression"],
                             ["Backing", "backing"],
-                            ["Material / Specification", "material_specification"],
+                            [
+                              "Material / Specification",
+                              "material_specification",
+                            ],
                             ["Base Metal", "base_metal"],
                           ].map(([label, key]) => (
                             <tr key={key}>
@@ -538,10 +557,12 @@ export default function CertificateVerificationPage() {
                                 {label}
                               </td>
                               <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                                {selectedCertificate.data.qualification[key]?.actual || "-"}
+                                {selectedCertificate.data.qualification[key]
+                                  ?.actual || "-"}
                               </td>
                               <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                                {selectedCertificate.data.qualification[key]?.qualification || "-"}
+                                {selectedCertificate.data.qualification[key]
+                                  ?.qualification || "-"}
                               </td>
                             </tr>
                           ))}
@@ -552,10 +573,12 @@ export default function CertificateVerificationPage() {
                               Thickness Plate
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_plate?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_plate?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_plate?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_plate?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -563,10 +586,12 @@ export default function CertificateVerificationPage() {
                               ↳ Fillet
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_plate_fillet?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_plate_fillet?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_plate_fillet?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_plate_fillet?.qualification || "-"}
                             </td>
                           </tr>
 
@@ -575,18 +600,24 @@ export default function CertificateVerificationPage() {
                             <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
                               Thickness Pipe
                             </td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
                           </tr>
                           <tr>
                             <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
                               ↳ Groove
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_pipe_groove?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_pipe_groove?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_pipe_groove?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_pipe_groove?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -594,10 +625,12 @@ export default function CertificateVerificationPage() {
                               ↳ Fillet
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_pipe_fillet?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_pipe_fillet?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.thickness_pipe_fillet?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .thickness_pipe_fillet?.qualification || "-"}
                             </td>
                           </tr>
 
@@ -606,18 +639,24 @@ export default function CertificateVerificationPage() {
                             <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
                               Diameter Pipe
                             </td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
                           </tr>
                           <tr>
                             <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
                               ↳ Groove
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.diameter_pipe_groove?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .diameter_pipe_groove?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.diameter_pipe_groove?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .diameter_pipe_groove?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -625,10 +664,12 @@ export default function CertificateVerificationPage() {
                               ↳ Fillet
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.diameter_pipe_fillet?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .diameter_pipe_fillet?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.diameter_pipe_fillet?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .diameter_pipe_fillet?.qualification || "-"}
                             </td>
                           </tr>
 
@@ -637,18 +678,24 @@ export default function CertificateVerificationPage() {
                             <td className="px-3 py-2 font-semibold text-primary-black dark:text-primary-white">
                               Filler Metal
                             </td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
-                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">—</td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
+                            <td className="px-3 py-2 text-primary-black dark:text-primary-white">
+                              —
+                            </td>
                           </tr>
                           <tr>
                             <td className="px-3 py-2 pl-6 text-primary-black dark:text-primary-white">
                               ↳ Spec.
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_spec?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_spec?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_spec?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_spec?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -656,10 +703,12 @@ export default function CertificateVerificationPage() {
                               ↳ AWS Class
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_aws_class?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_aws_class?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_aws_class?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_aws_class?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -667,10 +716,12 @@ export default function CertificateVerificationPage() {
                               ↳ F No.
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_f_no?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_f_no?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.filler_metal_f_no?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .filler_metal_f_no?.qualification || "-"}
                             </td>
                           </tr>
 
@@ -680,10 +731,12 @@ export default function CertificateVerificationPage() {
                               Gas / Flux Type
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.gas_flux_type?.actual || "-"}
+                              {selectedCertificate.data.qualification
+                                .gas_flux_type?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.gas_flux_type?.qualification || "-"}
+                              {selectedCertificate.data.qualification
+                                .gas_flux_type?.qualification || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -691,10 +744,12 @@ export default function CertificateVerificationPage() {
                               Others
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.others?.actual || "-"}
+                              {selectedCertificate.data.qualification.others
+                                ?.actual || "-"}
                             </td>
                             <td className="px-3 py-2 text-primary-black dark:text-primary-white">
-                              {selectedCertificate.data.qualification.others?.qualification || "-"}
+                              {selectedCertificate.data.qualification.others
+                                ?.qualification || "-"}
                             </td>
                           </tr>
                         </tbody>
@@ -717,7 +772,8 @@ export default function CertificateVerificationPage() {
                             Complete Weld Result
                           </span>
                           <span className="font-semibold text-primary-black dark:text-primary-white">
-                            {selectedCertificate.data.visual_examination.complete_weld_result || "-"}
+                            {selectedCertificate.data.visual_examination
+                              .complete_weld_result || "-"}
                           </span>
                         </div>
                       </div>
@@ -736,7 +792,8 @@ export default function CertificateVerificationPage() {
                             Conducted By
                           </span>
                           <span className="font-semibold text-primary-black dark:text-primary-white text-right">
-                            {selectedCertificate.data.mechanical_test.conducted_by || "-"}
+                            {selectedCertificate.data.mechanical_test
+                              .conducted_by || "-"}
                           </span>
                         </div>
                         <div className="flex justify-between items-start px-4 py-3">
@@ -744,7 +801,8 @@ export default function CertificateVerificationPage() {
                             Lab Test No.
                           </span>
                           <span className="font-semibold text-primary-black dark:text-primary-white text-right max-w-xs">
-                            {selectedCertificate.data.mechanical_test.lab_test_no || "-"}
+                            {selectedCertificate.data.mechanical_test
+                              .lab_test_no || "-"}
                           </span>
                         </div>
                       </div>
@@ -779,7 +837,8 @@ export default function CertificateVerificationPage() {
                               {item.label}
                             </span>
                             <span className="font-semibold text-primary-black dark:text-primary-white text-sm">
-                              {selectedCertificate.data.guide_bend[item.key] || "-"}
+                              {selectedCertificate.data.guide_bend[item.key] ||
+                                "-"}
                             </span>
                           </div>
                         ))}
@@ -812,7 +871,9 @@ export default function CertificateVerificationPage() {
                               {item.label}
                             </span>
                             <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right max-w-xs">
-                              {selectedCertificate.data.ultrasonic_test[item.key] || "-"}
+                              {selectedCertificate.data.ultrasonic_test[
+                                item.key
+                              ] || "-"}
                             </span>
                           </div>
                         ))}
@@ -835,7 +896,8 @@ export default function CertificateVerificationPage() {
                             Supervised By
                           </span>
                           <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right">
-                            {selectedCertificate.data.supervision.welding_supervised_by || "-"}
+                            {selectedCertificate.data.supervision
+                              .welding_supervised_by || "-"}
                           </span>
                         </div>
                         <div className="flex justify-between items-start px-4 py-3">
@@ -843,7 +905,8 @@ export default function CertificateVerificationPage() {
                             Company
                           </span>
                           <span className="font-semibold text-primary-black dark:text-primary-white text-sm text-right">
-                            {selectedCertificate.data.supervision.company || "-"}
+                            {selectedCertificate.data.supervision.company ||
+                              "-"}
                           </span>
                         </div>
                       </div>
@@ -851,39 +914,46 @@ export default function CertificateVerificationPage() {
                   )}
 
                   {/* Organization */}
-                  {selectedCertificate.data?.organizations && Array.isArray(selectedCertificate.data.organizations) && (
-                    <div>
-                      <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
-                        Organization
-                      </h3>
-                      <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg overflow-hidden">
-                        <div className="bg-primary-black/2 dark:bg-primary-white/5 border-b border-primary-black/10 dark:border-primary-white/10 grid grid-cols-2">
-                          <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider">
-                            Organization
-                          </div>
-                          <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider border-l border-primary-black/10 dark:border-primary-white/10">
-                            Signed By
-                          </div>
-                        </div>
-                        <div className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
-                          {selectedCertificate.data.organizations.map((org, idx) => (
-                            <div key={idx} className="grid grid-cols-2">
-                              <div className={`px-3 py-2 text-sm ${idx % 2 === 0 ? "bg-primary-black/2 dark:bg-primary-white/5" : ""}`}>
-                                {org.name || "-"}
-                              </div>
-                              <div
-                                className={`px-3 py-2 text-sm border-l border-primary-black/10 dark:border-primary-white/10 ${
-                                  idx % 2 === 0 ? "bg-primary-black/2 dark:bg-primary-white/5" : ""
-                                }`}
-                              >
-                                {org.signed_by || "-"}
-                              </div>
+                  {selectedCertificate.data?.organizations &&
+                    Array.isArray(selectedCertificate.data.organizations) && (
+                      <div>
+                        <h3 className="text-md font-semibold text-primary-black dark:text-primary-white mb-3">
+                          Organization
+                        </h3>
+                        <div className="border border-primary-black/10 dark:border-primary-white/10 rounded-lg overflow-hidden">
+                          <div className="bg-primary-black/2 dark:bg-primary-white/5 border-b border-primary-black/10 dark:border-primary-white/10 grid grid-cols-2">
+                            <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider">
+                              Organization
                             </div>
-                          ))}
+                            <div className="px-3 py-2 font-medium text-primary-black/70 dark:text-primary-white/70 text-xs uppercase tracking-wider border-l border-primary-black/10 dark:border-primary-white/10">
+                              Signed By
+                            </div>
+                          </div>
+                          <div className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
+                            {selectedCertificate.data.organizations.map(
+                              (org, idx) => (
+                                <div key={idx} className="grid grid-cols-2">
+                                  <div
+                                    className={`px-3 py-2 text-sm ${idx % 2 === 0 ? "bg-primary-black/2 dark:bg-primary-white/5" : ""}`}
+                                  >
+                                    {org.name || "-"}
+                                  </div>
+                                  <div
+                                    className={`px-3 py-2 text-sm border-l border-primary-black/10 dark:border-primary-white/10 ${
+                                      idx % 2 === 0
+                                        ? "bg-primary-black/2 dark:bg-primary-white/5"
+                                        : ""
+                                    }`}
+                                  >
+                                    {org.signed_by || "-"}
+                                  </div>
+                                </div>
+                              ),
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
 
                 {/* Back Button */}
