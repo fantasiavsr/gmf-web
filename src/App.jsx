@@ -28,6 +28,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import UserDashboard from "./pages/user-dashboard/Dashboard";
 import UserDashboardSettings from "./pages/user-dashboard/DashboardSettings";
 import UserDashboardProfiles from "./pages/user-dashboard/DashboardProfiles";
+import CertificateVerificationPage from "./pages/certificate/CertificateVerificationPage";
 
 function ScrollToTop() {
   const location = useLocation();
@@ -64,6 +65,7 @@ function App() {
             {/* <Route path="/products" element={<ProductPage />} /> */}
             {/* <Route path="/pricing" element={<PricingPage />} /> */}
             <Route path="/services" element={<ServicePage />} />
+            <Route path="/certificate" element={<CertificateVerificationPage />} />
 
             {/* Admin Dashboard - Only accessible to admin role */}
             {/* <Route element={<RoleBasedRoute requiredRole="admin" />}> */}

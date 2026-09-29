@@ -18,6 +18,7 @@ export const NavLinks = [
   /* { key: "pricing", label: "Pricing", path: "/pricing" }, */
   { key: "services", label: "Services", path: "/services" },
   { key: "about", label: "About", path: "/about" },
+  { key: "certificate", label: "Check Certificate", path: "/certificate" },
   /* { key: "404", label: "404", path: "/404" }, */
 ];
 
@@ -302,4 +303,197 @@ export const MockAnalyticsChartData = [
   { month: "Jul", revenue: 37891, users: 1434 },
   { month: "Aug", revenue: 41234, users: 1567 },
   { month: "Sep", revenue: 37891, users: 1723 },
+];
+
+// Certificate mock data
+export const MockCertificates = [
+  {
+    id: 1,
+    certificate_no: "GMF/WQT/AWS/0612",
+    welder_name: "John Welder",
+    welder_identification_no: "GMF-533",
+    type: "Welder Qualification Test Record",
+    issue_date: "2026-09-29",
+    test_date: "2025-04-09",
+    status: "active",
+    user_id: 2,
+    data: {
+      welderType: "welder",
+      wpsNo: "WPS-GMS-AWS-002",
+      wpsRevision: "1",
+      qualification: {
+        processType: {
+          actual: "SMAW + FCAW-GS",
+          qualification: "SMAW + FCAW-GS",
+        },
+        electrode: {
+          actual: "single electrode",
+          qualification: "SMAW + FCAW-GS",
+        },
+        currentPolarity: {
+          actual: "DC EP + DC EN",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        position: {
+          actual: "3G & 4G",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        weldinProgression: {
+          actual: "Uphill",
+          qualification: "Uphill",
+        },
+        backing: {
+          actual: "Yes [FCAW-GS]",
+          qualification: "With [FCAW-GS]",
+        },
+        materialSpecification: {
+          actual: "ASTM A36",
+          qualification: "Any",
+        },
+        baseMetalThickness: {
+          actual: "16 MM",
+          qualification: "5 mm to 32 mm",
+        },
+      },
+      visualExamination: {
+        completeWeldResult: "acceptable",
+      },
+      guideBend: {
+        sb1_3g: "acceptable",
+        sb2_3g: "acceptable",
+        sb1_4g: "acceptable",
+        sb2_4g: "acceptable",
+      },
+      mechanicalTest: {
+        conductedBy: "John Welder",
+        labTestNo: "1018/GMF-WQT/2025 & 1019/GMF-WQT/2025",
+      },
+    },
+  },
+  {
+    id: 2,
+    certificate_no: "GMF/WQT/AWS/0613",
+    welder_name: "John Welder",
+    welder_identification_no: "GMF-533",
+    type: "Welder Qualification Test Record",
+    issue_date: "2026-10-15",
+    test_date: "2025-05-12",
+    status: "active",
+    user_id: 3,
+    data: {
+      welderType: "welder",
+      wpsNo: "WPS-GMS-AWS-003",
+      wpsRevision: "2",
+      qualification: {
+        processType: {
+          actual: "GTAW + SMAW",
+          qualification: "GTAW + SMAW",
+        },
+        electrode: {
+          actual: "multiple electrodes",
+          qualification: "GTAW + SMAW",
+        },
+        currentPolarity: {
+          actual: "AC + DC EN",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        position: {
+          actual: "2G & 3G",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        weldinProgression: {
+          actual: "Downhill",
+          qualification: "Downhill",
+        },
+        backing: {
+          actual: "No",
+          qualification: "Without",
+        },
+        materialSpecification: {
+          actual: "ASTM A516 Grade 70",
+          qualification: "Any",
+        },
+        baseMetalThickness: {
+          actual: "12 MM",
+          qualification: "5 mm to 32 mm",
+        },
+      },
+      visualExamination: {
+        completeWeldResult: "acceptable",
+      },
+      guideBend: {
+        sb1_2g: "acceptable",
+        sb2_2g: "acceptable",
+        sb1_3g: "acceptable",
+        sb2_3g: "acceptable",
+      },
+      mechanicalTest: {
+        conductedBy: "Jane Welder",
+        labTestNo: "1020/GMF-WQT/2025 & 1021/GMF-WQT/2025",
+      },
+    },
+  },
+  {
+    id: 3,
+    certificate_no: "GMF/WQT/AWS/0614",
+    welder_name: "Jene Welder",
+    welder_identification_no: "GMF-534",
+    type: "Welder Qualification Test Record",
+    issue_date: "2026-10-15",
+    test_date: "2025-05-12",
+    status: "active",
+    user_id: 3,
+    data: {
+      welderType: "welder",
+      wpsNo: "WPS-GMS-AWS-003",
+      wpsRevision: "2",
+      qualification: {
+        processType: {
+          actual: "GTAW + SMAW",
+          qualification: "GTAW + SMAW",
+        },
+        electrode: {
+          actual: "multiple electrodes",
+          qualification: "GTAW + SMAW",
+        },
+        currentPolarity: {
+          actual: "AC + DC EN",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        position: {
+          actual: "2G & 3G",
+          qualification: "All for dihedral angle >= 30 to flat, over head and vertical",
+        },
+        weldinProgression: {
+          actual: "Downhill",
+          qualification: "Downhill",
+        },
+        backing: {
+          actual: "No",
+          qualification: "Without",
+        },
+        materialSpecification: {
+          actual: "ASTM A516 Grade 70",
+          qualification: "Any",
+        },
+        baseMetalThickness: {
+          actual: "12 MM",
+          qualification: "5 mm to 32 mm",
+        },
+      },
+      visualExamination: {
+        completeWeldResult: "acceptable",
+      },
+      guideBend: {
+        sb1_2g: "acceptable",
+        sb2_2g: "acceptable",
+        sb1_3g: "acceptable",
+        sb2_3g: "acceptable",
+      },
+      mechanicalTest: {
+        conductedBy: "Jane Welder",
+        labTestNo: "1020/GMF-WQT/2025 & 1021/GMF-WQT/2025",
+      },
+    },
+  },
 ];
