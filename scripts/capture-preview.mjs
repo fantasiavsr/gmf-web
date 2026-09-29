@@ -3,7 +3,7 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-const URL = 'https://editorial-web-sigma.vercel.app';
+const URL = 'https://gmf-web.vercel.app/';
 
 const outputDir = 'public';
 const framesDir = path.join(outputDir, 'gif-frames-smooth');
