@@ -68,13 +68,7 @@ This project consists of **two independent repositories**:
 
 ### Mock Data Fallback
 
-All pages use **mock data as fallback** when:
-
-- API requests fail (network error)
-- Backend is unavailable
-- User is not authenticated (for public features)
-
-Pages remain fully accessible during development without authentication.
+API mode falls back to local mock data when the backend cannot be reached or returns a server error. Normal API responses such as not-found and authorization errors are shown instead of being replaced with mock data.
 
 ---
 
@@ -93,52 +87,70 @@ Current implementation:
 
 ---
 
-## 📡 API Endpoints
+## 📡 API Routes
+
+All routes use the `/api` prefix. For local development, the base URL is `http://localhost:8000/api`.
 
 ### Authentication
 
-| Method | Endpoint             | Description       | Auth Required |
-| ------ | -------------------- | ----------------- | ------------- |
-| POST   | `/api/register`      | Register new user | No            |
-| POST   | `/api/login`         | Login user        | No            |
-| GET    | `/api/user`          | Get current user  | Yes           |
-| POST   | `/api/logout`        | Logout user       | Yes           |
-| PUT    | `/api/user/profile`  | Update profile    | Yes           |
-| PUT    | `/api/user/password` | Change password   | Yes           |
+Public routes do not need a token. For protected routes, send the Sanctum token returned by `POST /api/login`:
 
-### Certificate Management
+```http
+Authorization: Bearer <token>
+Accept: application/json
+Content-Type: application/json
+```
 
-| Method | Endpoint                                                 | Description                            | Auth Required |
-| ------ | -------------------------------------------------------- | -------------------------------------- | ------------- |
-| GET    | `/api/certificates/preview/{certificateNo}`              | Public certificate preview             | No            |
-| GET    | `/api/certificates/search?welder_identification_no={id}` | Search by welder ID                    | No            |
-| GET    | `/api/certificates/{certificateNo}/detail`               | Full certificate details (owner/admin) | Yes           |
-| GET    | `/api/certificates/{certificateNo}/pdf`                  | Download certificate PDF               | Yes           |
-| GET    | `/api/user/certificates`                                 | List user's certificates               | Yes           |
-| POST   | `/api/admin/certificates/{id}/link-user`                 | Link certificate to user (admin)       | Yes           |
+| Method | Route                | Access    | Purpose                                                           |
+| ------ | -------------------- | --------- | ----------------------------------------------------------------- |
+| `POST` | `/api/register`      | Public    | Create a user account; new registrations receive the `user` role. |
+| `POST` | `/api/login`         | Public    | Authenticate and return a user plus bearer token.                 |
+| `GET`  | `/api/user`          | Signed in | Get the current user.                                             |
+| `POST` | `/api/logout`        | Signed in | Revoke the current token.                                         |
+| `PUT`  | `/api/user/profile`  | Signed in | Update profile fields.                                            |
+| `PUT`  | `/api/user/password` | Signed in | Change the current password.                                      |
 
-### Dashboard CRUD
+### Certificate Routes
 
-| Method | Endpoint             | Description         | Auth Required |
-| ------ | -------------------- | ------------------- | ------------- |
-| GET    | `/api/products`      | List products       | Yes           |
-| POST   | `/api/products`      | Create product      | Yes           |
-| PUT    | `/api/products/{id}` | Update product      | Yes           |
-| DELETE | `/api/products/{id}` | Delete product      | Yes           |
-| GET    | `/api/services`      | List services       | Yes           |
-| POST   | `/api/services`      | Create service      | Yes           |
-| PUT    | `/api/services/{id}` | Update service      | Yes           |
-| DELETE | `/api/services/{id}` | Delete service      | Yes           |
-| GET    | `/api/pricing`       | List pricing plans  | Yes           |
-| POST   | `/api/pricing`       | Create pricing plan | Yes           |
-| PUT    | `/api/pricing/{id}`  | Update pricing plan | Yes           |
-| DELETE | `/api/pricing/{id}`  | Delete pricing plan | Yes           |
+Certificate previews are public. Full details and PDF metadata require authentication and certificate ownership, or the `admin` role. `GET /api/user/certificates` returns certificates owned by the signed-in user.
 
-### Health & Status
+| Method | Route                                                          | Access         | Purpose                                                                                        |
+| ------ | -------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/certificates/preview/{certificateNo}`                    | Public         | Return safe preview fields for one certificate.                                                |
+| `GET`  | `/api/certificates/search?welder_identification_no={welderId}` | Public         | Find preview records by welder ID.                                                             |
+| `GET`  | `/api/certificates/{certificateNo}/detail`                     | Owner or admin | Return the complete certificate record.                                                        |
+| `GET`  | `/api/certificates/{certificateNo}/pdf`                        | Owner or admin | Check PDF availability. Currently returns placeholder JSON; file streaming is not implemented. |
+| `GET`  | `/api/user/certificates`                                       | Signed in      | List the current user's certificates.                                                          |
+| `POST` | `/api/admin/certificates/{id}/link-user`                       | Admin          | Assign a certificate to a user. JSON body: `{"user_id": 2}`.                                   |
 
-| Method | Endpoint      | Description  | Auth Required |
-| ------ | ------------- | ------------ | ------------- |
-| GET    | `/api/health` | Health check | No            |
+Certificate numbers contain `/`, so URL-encode the full number in the path. For example, `GMF/WQT/AWS/0612` becomes `GMF%2FWQT%2FAWS%2F0612`:
+
+```bash
+curl "http://localhost:8000/api/certificates/preview/GMF%2FWQT%2FAWS%2F0612"
+curl "http://localhost:8000/api/certificates/search?welder_identification_no=GMF-533"
+```
+
+### Dashboard Resource Routes
+
+Products, services, and pricing use the same REST pattern. Replace `{resource}` with `products`, `services`, or `pricing`; `{id}` is the numeric database ID. Every route in this section requires a bearer token.
+
+| Method           | Route                  | Purpose          |
+| ---------------- | ---------------------- | ---------------- |
+| `GET`            | `/api/{resource}`      | List records.    |
+| `GET`            | `/api/{resource}/{id}` | Get one record.  |
+| `POST`           | `/api/{resource}`      | Create a record. |
+| `PUT` or `PATCH` | `/api/{resource}/{id}` | Update a record. |
+| `DELETE`         | `/api/{resource}/{id}` | Delete a record. |
+
+Examples: `GET /api/products/3`, `POST /api/services`, `PATCH /api/pricing/2`.
+
+Resource responses wrap records in a `data` property. For example, `GET /api/products` returns `{ "data": [...] }`.
+
+### Health Check
+
+| Method | Route         | Access | Purpose                               |
+| ------ | ------------- | ------ | ------------------------------------- |
+| `GET`  | `/api/health` | Public | Check that the backend is responding. |
 
 ---
 
