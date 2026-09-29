@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  Search,
-  CheckCircle,
-  AlertCircle,
-  Lock,
-} from "lucide-react";
+import { Search, CheckCircle, AlertCircle, Lock } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -49,7 +44,9 @@ export default function CertificateVerificationPage() {
     try {
       const isCertificateNo = searchInput.includes("/");
       const matches = isCertificateNo
-        ? [(await getCertificatePreview(searchInput)).certificate].filter(Boolean)
+        ? [(await getCertificatePreview(searchInput)).certificate].filter(
+            Boolean,
+          )
         : await getCertificatesByWelderId(searchInput.trim());
 
       if (matches.length === 0) {
@@ -395,7 +392,8 @@ export default function CertificateVerificationPage() {
                 </div>
 
                 {/* WPS Info */}
-                {(selectedCertificate.data?.wpsNo || selectedCertificate.data?.wps_no) && (
+                {(selectedCertificate.data?.wpsNo ||
+                  selectedCertificate.data?.wps_no) && (
                   <div>
                     <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
                       Welding Procedure Specification
@@ -406,7 +404,8 @@ export default function CertificateVerificationPage() {
                           WPS Number
                         </label>
                         <p className="text-primary-black dark:text-primary-white font-medium">
-                          {selectedCertificate.data.wpsNo || selectedCertificate.data.wps_no}
+                          {selectedCertificate.data.wpsNo ||
+                            selectedCertificate.data.wps_no}
                         </p>
                       </div>
                       <div>
@@ -414,7 +413,8 @@ export default function CertificateVerificationPage() {
                           Revision
                         </label>
                         <p className="text-primary-black dark:text-primary-white font-medium">
-                          {selectedCertificate.data.wpsRevision || selectedCertificate.data.wps_revision}
+                          {selectedCertificate.data.wpsRevision ||
+                            selectedCertificate.data.wps_revision}
                         </p>
                       </div>
                     </div>
@@ -422,8 +422,10 @@ export default function CertificateVerificationPage() {
                 )}
 
                 {/* Test Results */}
-                {(selectedCertificate.data?.visualExamination?.completeWeldResult ||
-                  selectedCertificate.data?.visual_examination?.complete_weld_result) && (
+                {(selectedCertificate.data?.visualExamination
+                  ?.completeWeldResult ||
+                  selectedCertificate.data?.visual_examination
+                    ?.complete_weld_result) && (
                   <div>
                     <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
                       Test Results
@@ -439,8 +441,12 @@ export default function CertificateVerificationPage() {
                             Visual Examination
                           </p>
                           <p className="text-sm text-primary-black/60 dark:text-primary-white/60 mt-1">
-                            {(selectedCertificate.data.visualExamination?.completeWeldResult ||
-                              selectedCertificate.data.visual_examination?.complete_weld_result)
+                            {(
+                              selectedCertificate.data.visualExamination
+                                ?.completeWeldResult ||
+                              selectedCertificate.data.visual_examination
+                                ?.complete_weld_result
+                            )
                               .charAt(0)
                               .toUpperCase() +
                               selectedCertificate.data.visualExamination.completeWeldResult.slice(
