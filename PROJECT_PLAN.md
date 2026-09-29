@@ -14,11 +14,11 @@
 **Next:** Deploy to Real Host or Future Enhancements
 **Blockers:** None
 
-| Phase Range | Status |
-| ----------- | ------ |
+| Phase Range | Status      |
+| ----------- | ----------- |
 | 0–17        | ✅ Complete |
 | Certificate | ✅ Complete |
-| Deployment  | ⬜ Future |
+| Deployment  | ⬜ Future   |
 
 ---
 
@@ -58,10 +58,10 @@
 
 ### Repositories
 
-| Repository          | Purpose               | Branch  |
-| ------------------- | --------------------- | ------- |
-| `gmf-web`     | React + Vite frontend | `main`  |
-| `gmf-backend` | Laravel REST API      | `master`|
+| Repository    | Purpose               | Branch   |
+| ------------- | --------------------- | -------- |
+| `gmf-web`     | React + Vite frontend | `main`   |
+| `gmf-backend` | Laravel REST API      | `master` |
 
 These are **independent repositories**. Not a monorepo.
 
@@ -85,14 +85,14 @@ Dashboard Page
 
 **Services layer** (`src/services/`):
 
-| File | Purpose |
-| ---- | ------- |
-| `api/config.js` | API URL, headers, `getApiEndpoint()`, `handleApiResponse()` |
-| `api/products.js` | Product CRUD functions with `AbortSignal` |
-| `api/services.js` | Service CRUD functions with `AbortSignal` |
-| `api/pricing.js` | Pricing CRUD functions with `AbortSignal` |
-| `api/auth.js` | `register()` — login ⬜ Phase 12 |
-| `data.js` | Data source abstraction, mock helpers, `fetchFromApiWithFallback()` |
+| File              | Purpose                                                             |
+| ----------------- | ------------------------------------------------------------------- |
+| `api/config.js`   | API URL, headers, `getApiEndpoint()`, `handleApiResponse()`         |
+| `api/products.js` | Product CRUD functions with `AbortSignal`                           |
+| `api/services.js` | Service CRUD functions with `AbortSignal`                           |
+| `api/pricing.js`  | Pricing CRUD functions with `AbortSignal`                           |
+| `api/auth.js`     | `register()` — login ⬜ Phase 12                                    |
+| `data.js`         | Data source abstraction, mock helpers, `fetchFromApiWithFallback()` |
 
 All API functions accept optional `signal: AbortSignal` for timeout/cancellation. `data.js` manages the `AbortController` per request. Mock fallback uses shared helpers (`mockRecordList`, `mockCreate`, `mockUpdate`, `mockDelete`).
 
@@ -113,18 +113,18 @@ All API functions accept optional `signal: AbortSignal` for timeout/cancellation
 
 ### API Endpoints
 
-| Method | Endpoint | Controller | Auth |
-| ------ | -------- | ---------- | ---- |
-| GET | `/api/health` | closure | No |
-| POST | `/api/register` | `AuthController@register` | No |
-| POST | `/api/login` | `AuthController@login` | No |
-| GET | `/api/user` | `AuthController@user` | Yes (sanctum) |
-| POST | `/api/logout` | `AuthController@logout` | Yes (sanctum) |
-| PUT | `/api/user/profile` | `AuthController@updateProfile` | Yes (sanctum) |
-| PUT | `/api/user/password` | `AuthController@changePassword` | Yes (sanctum) |
-| GET/POST/PUT/DELETE | `/api/products` | `ProductController` | No (Phase 16) |
-| GET/POST/PUT/DELETE | `/api/services` | `ServiceController` | No (Phase 16) |
-| GET/POST/PUT/DELETE | `/api/pricing` | `PricingPlanController` | No (Phase 16) |
+| Method              | Endpoint             | Controller                      | Auth          |
+| ------------------- | -------------------- | ------------------------------- | ------------- |
+| GET                 | `/api/health`        | closure                         | No            |
+| POST                | `/api/register`      | `AuthController@register`       | No            |
+| POST                | `/api/login`         | `AuthController@login`          | No            |
+| GET                 | `/api/user`          | `AuthController@user`           | Yes (sanctum) |
+| POST                | `/api/logout`        | `AuthController@logout`         | Yes (sanctum) |
+| PUT                 | `/api/user/profile`  | `AuthController@updateProfile`  | Yes (sanctum) |
+| PUT                 | `/api/user/password` | `AuthController@changePassword` | Yes (sanctum) |
+| GET/POST/PUT/DELETE | `/api/products`      | `ProductController`             | No (Phase 16) |
+| GET/POST/PUT/DELETE | `/api/services`      | `ServiceController`             | No (Phase 16) |
+| GET/POST/PUT/DELETE | `/api/pricing`       | `PricingPlanController`         | No (Phase 16) |
 
 ### Local Development
 
@@ -138,42 +138,42 @@ All API functions accept optional `signal: AbortSignal` for timeout/cancellation
 
 ### Pages & Routes
 
-| Route                 | Page                | Data Source                  | Layout                    |
-| --------------------- | ------------------- | --------------------------- | ------------------------- |
-| `/`                   | LandingPage         | Inline + NavLinks           | Self-contained            |
-| `/about`              | About               | Inline + NavLinks           | Self-contained            |
-| `/products`           | ProductPage         | Inline + NavLinks           | Self-contained            |
-| `/pricing`            | PricingPage         | Inline + NavLinks           | Self-contained            |
-| `/services`           | ServicePage         | Inline + NavLinks           | Self-contained            |
-| `/dashboard`          | Dashboard           | Inline (stats/charts)       | DashboardLayout           |
-| `/dashboard/profiles` | DashboardProfiles   | Mock                        | DashboardLayout           |
-| `/dashboard/products` | DashboardProducts   | **API/Mock** (useEntityCrud)| DashboardLayout           |
-| `/dashboard/services` | DashboardServices   | **API/Mock** (useEntityCrud)| DashboardLayout           |
-| `/dashboard/pricing`  | DashboardPricing    | **API/Mock** (useEntityCrud)| DashboardLayout           |
-| `/dashboard/settings` | DashboardSettings   | Inline                      | DashboardLayout           |
-| `/dashboard2/*`       | Dashboard2 variants | Same as above               | DashboardSidebarLayout    |
-| `/login`              | Login               | Simulated (setTimeout)      | Self-contained            |
-| `/register`           | Register            | **API** (POST /api/register)| Self-contained            |
-| `/forgot-password`    | ForgotPassword      | Static                      | Self-contained            |
-| `/unauthorized`       | Unauthorized        | None                        | Self-contained            |
-| `*`                   | NotFound            | None                        | Self-contained            |
+| Route                 | Page                | Data Source                  | Layout                 |
+| --------------------- | ------------------- | ---------------------------- | ---------------------- |
+| `/`                   | LandingPage         | Inline + NavLinks            | Self-contained         |
+| `/about`              | About               | Inline + NavLinks            | Self-contained         |
+| `/products`           | ProductPage         | Inline + NavLinks            | Self-contained         |
+| `/pricing`            | PricingPage         | Inline + NavLinks            | Self-contained         |
+| `/services`           | ServicePage         | Inline + NavLinks            | Self-contained         |
+| `/dashboard`          | Dashboard           | Inline (stats/charts)        | DashboardLayout        |
+| `/dashboard/profiles` | DashboardProfiles   | Mock                         | DashboardLayout        |
+| `/dashboard/products` | DashboardProducts   | **API/Mock** (useEntityCrud) | DashboardLayout        |
+| `/dashboard/services` | DashboardServices   | **API/Mock** (useEntityCrud) | DashboardLayout        |
+| `/dashboard/pricing`  | DashboardPricing    | **API/Mock** (useEntityCrud) | DashboardLayout        |
+| `/dashboard/settings` | DashboardSettings   | Inline                       | DashboardLayout        |
+| `/dashboard2/*`       | Dashboard2 variants | Same as above                | DashboardSidebarLayout |
+| `/login`              | Login               | Simulated (setTimeout)       | Self-contained         |
+| `/register`           | Register            | **API** (POST /api/register) | Self-contained         |
+| `/forgot-password`    | ForgotPassword      | Static                       | Self-contained         |
+| `/unauthorized`       | Unauthorized        | None                         | Self-contained         |
+| `*`                   | NotFound            | None                         | Self-contained         |
 
 ### Mock Data (`src/data/exampleData.js`)
 
-| Export         | Count | Fields                                                        |
-| -------------- | ----- | ------------------------------------------------------------- |
-| `NavLinks`     | 6     | `key, label, path, subLinks?`                                 |
-| `MockProducts` | 6     | `name, type, price, available, status, sku, description`      |
+| Export         | Count | Fields                                                                   |
+| -------------- | ----- | ------------------------------------------------------------------------ |
+| `NavLinks`     | 6     | `key, label, path, subLinks?`                                            |
+| `MockProducts` | 6     | `name, type, price, available, status, sku, description`                 |
 | `MockServices` | 3     | `name, description, included[], price, billingPeriod, duration, members` |
-| `MockPricing`  | 3     | `name, description, price, billingPeriod, benefits[], duration` |
+| `MockPricing`  | 3     | `name, description, price, billingPeriod, benefits[], duration`          |
 
 ### Entity Schemas (`src/components/data-management/entitySchemas.js`)
 
-| Entity | Required Fields | Notable Fields |
-| ------ | --------------- | -------------- |
-| `product` | `name`, `sku` | `type, price, status (active/inactive), available, description` |
-| `service` | `name` | `description, included[], price, billingPeriod, duration, members` |
-| `pricing` | `name` | `description, price, billingPeriod, benefits[], duration` |
+| Entity    | Required Fields | Notable Fields                                                     |
+| --------- | --------------- | ------------------------------------------------------------------ |
+| `product` | `name`, `sku`   | `type, price, status (active/inactive), available, description`    |
+| `service` | `name`          | `description, included[], price, billingPeriod, duration, members` |
+| `pricing` | `name`          | `description, price, billingPeriod, benefits[], duration`          |
 
 ### Key Components
 
@@ -186,17 +186,17 @@ All API functions accept optional `signal: AbortSignal` for timeout/cancellation
 
 ### Key Dependencies
 
-| Package                 | Version | Purpose               |
-| ----------------------- | ------- | --------------------- |
-| react                   | ^19.2.8 | UI framework          |
-| react-router-dom        | ^7.18.3 | Client-side routing   |
-| vite                    | ^8.2.2  | Build tool            |
-| tailwindcss             | ^4.3.3  | CSS framework         |
-| next-themes             | ^0.4.6  | Dark/light mode       |
-| lucide-react            | ^1.34.0 | Icons                 |
-| motion                  | ^13.1.1 | Animations            |
-| gsap                    | ^3.15.0 | Advanced animations   |
-| three + @react-three/*  | —       | 3D visualization      |
+| Package                 | Version | Purpose             |
+| ----------------------- | ------- | ------------------- |
+| react                   | ^19.2.8 | UI framework        |
+| react-router-dom        | ^7.18.3 | Client-side routing |
+| vite                    | ^8.2.2  | Build tool          |
+| tailwindcss             | ^4.3.3  | CSS framework       |
+| next-themes             | ^0.4.6  | Dark/light mode     |
+| lucide-react            | ^1.34.0 | Icons               |
+| motion                  | ^13.1.1 | Animations          |
+| gsap                    | ^3.15.0 | Advanced animations |
+| three + @react-three/\* | —       | 3D visualization    |
 
 ---
 
@@ -442,10 +442,12 @@ Vercel mock deployment is already working as intended:
 #### Files Changed
 
 **Backend:**
+
 - `app/Http/Controllers/AuthController.php` — added `user()` and `logout()` methods
 - `routes/api.php` — added protected route group with `auth:sanctum` middleware
 
 **Frontend:**
+
 - `src/services/api/auth.js` — added `getUser()` and `logout()` with Authorization headers
 - `src/components/Navbar.jsx` — integrated logout, authentication state, and conditional UI
 
@@ -488,10 +490,12 @@ Next: Phase 14 — Integrate Profile Authentication
 #### Files Changed
 
 **Backend:**
+
 - `app/Http/Controllers/AuthController.php` — added `updateProfile()` and `changePassword()` methods
 - `routes/api.php` — added profile and password routes to `auth:sanctum` middleware group
 
 **Frontend:**
+
 - `src/services/api/auth.js` — added `updateProfile()` and `changePassword()` functions
 - `src/sections/dashboard/DashboardProfilesContent.jsx` — connected to API, removed mock auth helper, added user data fetching on mount
 
@@ -527,6 +531,7 @@ Next: Phase 15 — Integrate React Authentication
 #### Files Changed
 
 **Frontend:**
+
 - `src/context/AuthContext.jsx` — new file, centralized auth state provider
 - `src/App.jsx` — wrapped with `AuthProvider`
 - `src/pages/auth/Login.jsx` — uses `useAuth()` hook, calls context `login()`
@@ -566,10 +571,12 @@ Next: Phase 16 — Protect Routes & Authorize Admins
 #### Files Changed
 
 **Backend:**
+
 - `routes/api.php` — wrapped CRUD routes with custom middleware
 - `app/Http/Middleware/EnsureTokenIsValid.php` — new file, proper API auth middleware
 
 **Frontend:**
+
 - `src/components/ProtectedRoute.jsx` — updated to use `useAuth()` hook and `<Outlet />`
 - `src/App.jsx` — activated ProtectedRoute for dashboard routes, added import
 - `src/services/api/config.js` — added `getHeaders()` function with token injection
@@ -593,6 +600,7 @@ Next: Phase 17 — Test Authentication
 #### Test Results
 
 **Authentication Flow Tests:**
+
 - ✅ User registration with validation (201 Created)
 - ✅ User data retrieval via GET /api/user (200 OK)
 - ✅ Profile update via PUT /api/user/profile (200 OK)
@@ -601,6 +609,7 @@ Next: Phase 17 — Test Authentication
 - ✅ Login with registered credentials (201 Created)
 
 **Protected Route Access Tests:**
+
 - ✅ Unauthenticated GET /api/products (401 Unauthorized)
 - ✅ Unauthenticated GET /api/services (401 Unauthorized)
 - ✅ Unauthenticated GET /api/pricing (401 Unauthorized)
@@ -609,11 +618,13 @@ Next: Phase 17 — Test Authentication
 - ✅ Authenticated GET /api/pricing (200 OK)
 
 **Credential Validation Tests:**
+
 - ✅ Login with correct credentials succeeds (201 Created)
 - ✅ Login with wrong password fails (401 Unauthorized)
 - ✅ Registration validation enforced (email:unique, password:min:8, confirmed)
 
 **Edge Cases Tested:**
+
 - ✅ Wrong password login rejection
 - ✅ Duplicate email validation (unique constraint)
 - ✅ Token-based access to all CRUD endpoints
@@ -622,6 +633,7 @@ Next: Phase 17 — Test Authentication
 #### Verification Summary
 
 All authentication flows working as designed:
+
 - Registration creates user with token ✅
 - Authenticated users can access protected CRUD routes ✅
 - Unauthenticated access returns 401 ✅
@@ -639,12 +651,14 @@ All authentication flows working as designed:
 #### Files Verified
 
 **Backend:**
+
 - `app/Http/Controllers/AuthController.php` — all auth methods working
 - `app/Http/Middleware/EnsureTokenIsValid.php` — properly rejects unauthenticated requests
 - `routes/api.php` — CRUD routes protected with custom middleware
 - `tests/` — Laravel tests pass (2 passed)
 
 **Frontend:**
+
 - `src/context/AuthContext.jsx` — centralized auth state management
 - `src/components/ProtectedRoute.jsx` — properly redirects unauthenticated users
 - `src/App.jsx` — dashboard routes protected
@@ -654,30 +668,50 @@ All authentication flows working as designed:
 ### Phase 18.1 — Certificate API Endpoint Fix ✅
 
 #### Issue
+
 Certificates were always displaying mock data even though:
+
 - Laravel backend was running and database had certificates
 - User was logged in with correct credentials
 - Authorization checks were properly configured
 
 #### Root Cause
+
 Frontend was calling the wrong API endpoint:
-- **Frontend called**: `/api/certificates/{certificateNo}` 
+
+- **Frontend called**: `/api/certificates/{certificateNo}`
 - **Backend provides**: `/api/certificates/preview/{certificateNo}`
 
 When frontend got a 404, it fell back to mock data silently.
 
 #### Solution
+
 **File Changed:**
+
 - `src/services/api/certificates.js` — Updated `getCertificatePreview()` to use correct endpoint path `/certificates/preview/`
 
 #### Verification
+
 - ✅ Backend certificate preview endpoint tested and returns correct data
 - ✅ Frontend build passes (2462 modules transformed, 961ms)
 - ✅ Token-based authentication working for certificate owner and admin access
 - ✅ Database seeder correctly assigns `user_id` to certificate
 
 #### Result
+
 Certificates now fetch from Laravel API when available. Mock data still works as fallback when API is unavailable.
+
+#### Follow-up correction (2026-09-29)
+
+- Added a public database lookup by welder identification number; certificate verification no longer searches local mock data.
+- Aligned certificate API requests with the shared product-service pattern (`getHeaders` and `handleApiResponse`); API errors no longer silently become mock data.
+- Added explicit sample-data fallback for network failures and HTTP 5xx responses, with a visible warning. HTTP 404 and authorization errors remain API errors; offline detail fallback checks the mock certificate owner/admin.
+- Updated certificate detail rendering to support the snake_case JSON fields used by the Laravel certificate seeder as well as existing camelCase data.
+- Verification: all 5 Laravel tests pass, the frontend production build passes, and targeted frontend lint passes.
+- Seeded the missing WQT document type and certificate `GMF/WQT/AWS/0612` for welder `GMF-533` using `DocumentTypeSeeder` and `CertificateSeeder`.
+- Verified both live public lookups return the certificate: `/api/certificates/preview/GMF%2FWQT%2FAWS%2F0612` and `/api/certificates/search?welder_identification_no=GMF-533`.
+- Offline fallback verified with targeted frontend lint, diagnostics, a successful production build, and a browser smoke test against an unreachable API URL.
+- Reorganized `src/services/api/certificates.js` to document each endpoint and centralize fallback handling without changing page-facing result shapes; targeted lint, production build, and the offline browser smoke test passed. Live API verification was unavailable because Laravel was not running.
 
 ---
 
@@ -688,24 +722,28 @@ Next: Phase 18 — Certificate Management System Foundation
 #### Backend
 
 **Database Migrations:**
+
 - Created `document_types` table: id, name, category, description, is_public, timestamps
 - Created `documents` table: id, document_type_id, title, identification_no, file_path, original_filename, issue_date, expiry_date, status, created_by, timestamps
 - Created `certificates` table: id, document_id (nullable), user_id (nullable), certificate_no (unique), welder_name, welder_identification_no, test_date, data (JSON), timestamps
 - Added `identification_no` column to users table
 
 **Models:**
+
 - Created `DocumentType` model with `hasMany(Document)` relationship
 - Created `Document` model with relationships to DocumentType, User (creator), and Certificates
 - Created `Certificate` model with relationships to Document and User (owner)
 - JSON casting for `certificates.data` field to store full WQT details
 
 **Seed Data:**
+
 - Created `DocumentTypeSeeder` with WQT document type definition
 - Created `CertificateSeeder` with test user (identification_no: GMF-533) and full WQT certificate
 - Test certificate: `GMF/WQT/AWS/0612` with complete qualification data, test results, and supervision info
 - Both seeders integrated into `DatabaseSeeder`
 
 **API Endpoints:**
+
 - `GET /api/certificates/{certificateNo}` — Public preview (safe information only, no auth required)
 - `GET /api/certificates/{certificateNo}/detail` — Full details (owner or admin only, requires auth)
 - `GET /api/certificates/{certificateNo}/pdf` — Download PDF (owner or admin only, requires auth)
@@ -714,6 +752,7 @@ Next: Phase 18 — Certificate Management System Foundation
 - All routes handle forward slashes in certificate numbers with `.where('certificateNo', '.*')` constraint
 
 **Controller:**
+
 - Created `CertificateController` with 5 action methods
 - Authorization enforces `user_id` ownership rule (no name/ID-number comparison)
 - Unauthenticated users see public preview; authenticated users see details if owner
@@ -723,17 +762,20 @@ Next: Phase 18 — Certificate Management System Foundation
 #### Frontend
 
 **API Service Layer:**
+
 - Created `src/services/api/certificates.js` with public and protected endpoints
 - Functions: `getCertificatePreview()`, `getCertificateDetail()`, `getUserCertificates()`, `downloadCertificatePdf()`, `linkToUser()`
 - Mock data fallback for all functions when API unavailable
 - Bearer token authentication for protected endpoints
 
 **Mock Data:**
+
 - Added `MockCertificates` to `src/data/exampleData.js`
 - Includes full WQT example with qualification, visual, mechanical, and guide bend data
 - Matches backend seed data for consistent testing
 
 **UI Components:**
+
 - Created `CertificateVerificationPage` component at `src/pages/certificate/CertificateVerificationPage.jsx`
 - Public search form: search by certificate number (GMF/WQT/AWS/0612)
 - Preview display: shows safe information (certificate number, welder name, type, dates, status)
@@ -743,11 +785,13 @@ Next: Phase 18 — Certificate Management System Foundation
 - Responsive design with dark mode support
 
 **Routing:**
+
 - Added certificate route to `src/App.jsx`: `/certificate` → `CertificateVerificationPage`
 - Public route (no authentication required)
 - Added "Check Certificate" link to navigation in `NavLinks`
 
 **Verification:**
+
 - ✅ Frontend production build successful
 - ✅ Laravel tests pass (2 passed, 2 assertions)
 - ✅ Public certificate preview endpoint returns correct data
@@ -759,6 +803,7 @@ Next: Phase 18 — Certificate Management System Foundation
 #### Files Changed
 
 **Backend:**
+
 - `database/migrations/2026_09_29_000001_create_document_types_table.php` — NEW
 - `database/migrations/2026_09_29_000002_create_documents_table.php` — NEW
 - `database/migrations/2026_09_29_000003_create_certificates_table.php` — NEW
@@ -773,6 +818,7 @@ Next: Phase 18 — Certificate Management System Foundation
 - `database/seeders/DatabaseSeeder.php` — Updated to call new seeders
 
 **Frontend:**
+
 - `src/services/api/certificates.js` — NEW
 - `src/pages/certificate/CertificateVerificationPage.jsx` — NEW
 - `src/data/exampleData.js` — Added `MockCertificates` export
@@ -781,6 +827,7 @@ Next: Phase 18 — Certificate Management System Foundation
 #### Architecture Summary
 
 **Authorization Model:**
+
 - Uses `certificate.user_id` as the single source of truth for ownership
 - Welder name and identification number are retained as informational fields only
 - Admin role can access all certificates
@@ -788,11 +835,13 @@ Next: Phase 18 — Certificate Management System Foundation
 - Detailed access restricted by user_id match
 
 **Data Storage:**
+
 - Certificate metadata in database columns: certificate_no, user_id, welder_name, test_date, etc.
 - Detailed WQT information stored in JSON `data` field (qualification, tests, supervision, etc.)
 - PDF files stored in private storage (not in database or public directory)
 
 **Fallback Pattern:**
+
 - API unavailable or unauthenticated: mock data returned to frontend
 - Certificate not found: 404 returned
 - Access denied: 403 returned with error message
@@ -895,10 +944,10 @@ Never run `migrate:fresh`, destructive seeders, or force pushes against a produc
 4. **Data source switching via env var** — `VITE_DATA_SOURCE=mock|api`
 5. **Native fetch()** — no Axios, no React Query; all API functions accept `AbortSignal`
 6. **Dashboard CRUD pages first** — connected to services layer; public pages use inline data
-6. **Sanctum personal access tokens** — for auth, not Passport or Breeze
-7. **Role is backend-controlled** — never assignable from frontend data
-8. **Products was first API resource** — simplest schema, now fully connected
-9. **Auth is phase-by-phase** — Phases 8–17, one at a time, never combined
+7. **Sanctum personal access tokens** — for auth, not Passport or Breeze
+8. **Role is backend-controlled** — never assignable from frontend data
+9. **Products was first API resource** — simplest schema, now fully connected
+10. **Auth is phase-by-phase** — Phases 8–17, one at a time, never combined
 
 ---
 
@@ -916,9 +965,11 @@ Never run `migrate:fresh`, destructive seeders, or force pushes against a produc
 Added visual warning banners to dashboard pages when mock data fallback is active:
 
 **Files Added:**
+
 - `src/components/feedback/MockDataWarning.jsx` — reusable amber warning banner component
 
 **Files Modified:**
+
 - `src/services/data.js` — added `lastCallUsedFallback` tracker and `lastCallUsedMockFallback()` export
 - `src/hooks/useEntityCrud.js` — added `usingMockData` state tracking and export
 - `src/sections/dashboard/DashboardProductsContent.jsx` — displays warning when mock data loaded
@@ -927,6 +978,7 @@ Added visual warning banners to dashboard pages when mock data fallback is activ
 - `src/sections/dashboard/DashboardProfilesContent.jsx` — displays warning when mock data loaded
 
 **Behavior:**
+
 - Warning appears when `VITE_DATA_SOURCE=mock` or when API requests fail/timeout
 - Clear amber banner with alert icon explaining mock data usage
 - Informs users that changes will not be saved to the database

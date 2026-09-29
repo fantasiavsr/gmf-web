@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Search, CheckCircle, AlertCircle, Lock } from "lucide-react";
+import {
+  Search,
+  CheckCircle,
+  AlertCircle,
+  Lock,
+  AlertTriangle,
+} from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -25,6 +31,10 @@ export default function CertificateVerificationPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [usingMockData, setUsingMockData] = useState(false);
+  const visualExaminationResult =
+    selectedCertificate?.data?.visualExamination?.completeWeldResult ??
+    selectedCertificate?.data?.visual_examination?.complete_weld_result;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -40,14 +50,21 @@ export default function CertificateVerificationPage() {
     setCertificates([]);
     setSelectedCertificate(null);
     setShowDetails(false);
+    setUsingMockData(false);
 
     try {
       const isCertificateNo = searchInput.includes("/");
-      const matches = isCertificateNo
-        ? [(await getCertificatePreview(searchInput)).certificate].filter(
-            Boolean,
-          )
-        : await getCertificatesByWelderId(searchInput.trim());
+      let matches;
+
+      if (isCertificateNo) {
+        const result = await getCertificatePreview(searchInput.trim());
+        matches = result.certificate ? [result.certificate] : [];
+        setUsingMockData(Boolean(result.isMockData));
+      } else {
+        const result = await getCertificatesByWelderId(searchInput.trim());
+        matches = result.certificates;
+        setUsingMockData(Boolean(result.isMockData));
+      }
 
       if (matches.length === 0) {
         setError("No certificates found for this search");
@@ -80,6 +97,22 @@ export default function CertificateVerificationPage() {
       const response = await getCertificateDetail(cert.certificate_no);
 
       if (response.certificate) {
+        if (
+          response.isMockData &&
+          user?.role !== "admin" &&
+          String(response.certificate.user_id) !== String(user?.id)
+        ) {
+          setSelectedCertificate((prev) => ({
+            ...prev,
+            accessDenied: true,
+          }));
+          setError(
+            "You do not have access to view this certificate. Please contact your administrator.",
+          );
+          return;
+        }
+
+        setUsingMockData((current) => current || Boolean(response.isMockData));
         setSelectedCertificate({
           ...response.certificate,
           isPreview: false,
@@ -127,6 +160,18 @@ export default function CertificateVerificationPage() {
 
       {/* Search Section */}
       <section className="pt-0 pb-20 px-8 md:px-16 md:max-w-7xl mx-auto">
+        {usingMockData && (
+          <div className="mb-8 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+            <AlertTriangle
+              className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"
+              size={20}
+            />
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              The backend is unavailable. Showing local sample certificate data.
+            </p>
+          </div>
+        )}
+
         {/* Search Form */}
         <div className="bg-primary-white dark:bg-primary-dark-card rounded-lg shadow-sm p-8 mb-12">
           <form onSubmit={handleSearch} className="space-y-4">
@@ -422,10 +467,7 @@ export default function CertificateVerificationPage() {
                 )}
 
                 {/* Test Results */}
-                {(selectedCertificate.data?.visualExamination
-                  ?.completeWeldResult ||
-                  selectedCertificate.data?.visual_examination
-                    ?.complete_weld_result) && (
+                {visualExaminationResult && (
                   <div>
                     <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
                       Test Results
@@ -441,17 +483,8 @@ export default function CertificateVerificationPage() {
                             Visual Examination
                           </p>
                           <p className="text-sm text-primary-black/60 dark:text-primary-white/60 mt-1">
-                            {(
-                              selectedCertificate.data.visualExamination
-                                ?.completeWeldResult ||
-                              selectedCertificate.data.visual_examination
-                                ?.complete_weld_result
-                            )
-                              .charAt(0)
-                              .toUpperCase() +
-                              selectedCertificate.data.visualExamination.completeWeldResult.slice(
-                                1,
-                              )}
+                            {visualExaminationResult.charAt(0).toUpperCase() +
+                              visualExaminationResult.slice(1)}
                           </p>
                         </div>
                       </div>
