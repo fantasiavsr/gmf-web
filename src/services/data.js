@@ -20,10 +20,11 @@
  * 2. Keep .env.local to use API mode (local development with real backend)
  */
 
-import { MockProducts, MockServices, MockPricing } from '../data/exampleData.js';
+import { MockProducts, MockServices, MockPricing, MockCertificates } from '../data/exampleData.js';
 import * as productsApi from './api/products.js';
 import * as servicesApi from './api/services.js';
 import * as pricingApi from './api/pricing.js';
+import * as certificatesApi from './api/certificates.js';
 
 // Determine which data source to use
 const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE || 'mock';
@@ -40,7 +41,7 @@ let lastCallUsedFallback = false;
 /**
  * Helper to fetch from API with timeout and fallback to mock on error
  */
-async function fetchFromApiWithFallback(apiCall, fallbackData) {
+async function fetchFromApiWithFallback(apiCall, fallbackData, shouldFallback = () => true) {
   if (DATA_SOURCE !== 'api') {
     lastCallUsedFallback = true;
     return fallbackData();
@@ -54,20 +55,32 @@ async function fetchFromApiWithFallback(apiCall, fallbackData) {
     lastCallUsedFallback = false;
     return result;
   } catch (error) {
+    if (!ENABLE_API_FALLBACK || !shouldFallback(error)) {
+      lastCallUsedFallback = false;
+      throw error;
+    }
+
     lastCallUsedFallback = true;
     if (error.name === 'AbortError') {
       console.warn(`⏱️  API request timed out after ${API_TIMEOUT}ms, falling back to mock data`);
     } else {
       console.warn(`⚠️  API request failed, falling back to mock data:`, error.message);
     }
-    if (ENABLE_API_FALLBACK) {
-      return fallbackData();
-    } else {
-      throw error;
-    }
+    return fallbackData();
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+function isCertificateBackendUnavailable(error) {
+  return error instanceof TypeError || error?.name === 'AbortError' || error?.status >= 500;
+}
+
+function findMockCertificate(certificateNo) {
+  return MockCertificates.find(
+    (certificate) =>
+      certificate.certificate_no.toLowerCase() === certificateNo.trim().toLowerCase(),
+  );
 }
 
 /**
@@ -200,6 +213,52 @@ export const pricingDataSource = {
       (signal) => pricingApi.deletePricingPlan(id, signal),
       () => Promise.resolve(mockDelete(MockPricing, id, 'Pricing plan'))
     );
+  },
+};
+
+/**
+ * Certificate lookup data source.
+ * Uses sample certificates in mock mode or when the API is unavailable.
+ */
+export const certificateDataSource = {
+  async getPreview(certificateNo) {
+    const result = await fetchFromApiWithFallback(
+      (signal) => certificatesApi.getCertificatePreview(certificateNo, signal),
+      () => ({ certificate: findMockCertificate(certificateNo) || null }),
+      isCertificateBackendUnavailable,
+    );
+    return { ...result, isMockData: lastCallUsedFallback };
+  },
+  async getByWelderId(welderId) {
+    const certificates = await fetchFromApiWithFallback(
+      (signal) => certificatesApi.getCertificatesByWelderId(welderId, signal),
+      () => MockCertificates.filter(
+        (certificate) =>
+          certificate.welder_identification_no.toLowerCase() ===
+          welderId.trim().toLowerCase(),
+      ),
+      isCertificateBackendUnavailable,
+    );
+    return { certificates, isMockData: lastCallUsedFallback };
+  },
+  async getDetail(certificateNo) {
+    const result = await fetchFromApiWithFallback(
+      (signal) => certificatesApi.getCertificateDetail(certificateNo, signal),
+      () => ({ certificate: findMockCertificate(certificateNo) || null }),
+      isCertificateBackendUnavailable,
+    );
+    return { ...result, isMockData: lastCallUsedFallback };
+  },
+  async getForUser() {
+    const result = await fetchFromApiWithFallback(
+      (signal) => certificatesApi.getUserCertificates(signal),
+      () => ({ certificates: MockCertificates }),
+      isCertificateBackendUnavailable,
+    );
+    return { ...result, isMockData: lastCallUsedFallback };
+  },
+  downloadPdf(certificateNo, signal) {
+    return certificatesApi.downloadCertificatePdf(certificateNo, signal);
   },
 };
 

@@ -710,8 +710,12 @@ Certificates now fetch from Laravel API when available. Mock data still works as
 - Verification: all 5 Laravel tests pass, the frontend production build passes, and targeted frontend lint passes.
 - Seeded the missing WQT document type and certificate `GMF/WQT/AWS/0612` for welder `GMF-533` using `DocumentTypeSeeder` and `CertificateSeeder`.
 - Verified both live public lookups return the certificate: `/api/certificates/preview/GMF%2FWQT%2FAWS%2F0612` and `/api/certificates/search?welder_identification_no=GMF-533`.
+- Added local-only repeatable demo accounts for `admin` and `user` roles; made all seeders invoked by `DatabaseSeeder` safe to rerun without wiping records.
+- Verification: full `php artisan db:seed` ran three times; both account roles were confirmed and the certificate fixture count remained one. Full Laravel test suite passes (5 tests, 10 assertions).
 - Offline fallback verified with targeted frontend lint, diagnostics, a successful production build, and a browser smoke test against an unreachable API URL.
-- Reorganized `src/services/api/certificates.js` to document each endpoint and centralize fallback handling without changing page-facing result shapes; targeted lint, production build, and the offline browser smoke test passed. Live API verification was unavailable because Laravel was not running.
+- Added `certificateDataSource` to `src/services/data.js` so certificates follow the shared `VITE_DATA_SOURCE` mock/API setting and use the same fallback tracking as products, services, and pricing. `src/services/api/certificates.js` now only handles API requests; the page-facing result shapes are preserved.
+- Verified with targeted lint, diagnostics, a production build, and API-mode browser smoke tests for certificate-number and welder-ID mock fallback. Live API verification was unavailable because Laravel was not running.
+- Updated the authenticated full-details view to render all certificate metadata and nested data as a responsive table; browser verification confirmed 48 rows including WPS, qualification, visual examination, guide-bend, and mechanical-test values.
 
 ---
 

@@ -9,11 +9,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import {
-  getCertificatePreview,
-  getCertificateDetail,
-  getCertificatesByWelderId,
-} from "../../services/api/certificates";
+import { certificateDataSource } from "../../services/data";
 import { NavLinks } from "../../data/exampleData";
 
 if (typeof window !== "undefined") {
@@ -21,6 +17,77 @@ if (typeof window !== "undefined") {
   if (savedTheme === "dark") {
     document.documentElement.classList.add("dark");
   }
+}
+
+function formatCertificateLabel(value) {
+  return String(value)
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function formatCertificateValue(value) {
+  if (value === null || value === undefined || value === "") {
+    return "Not provided";
+  }
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  return String(value);
+}
+
+function renderCertificateRows(value, path = "certificate") {
+  const entries = Array.isArray(value)
+    ? value.map((entry, index) => [`entry-${index + 1}`, entry])
+    : Object.entries(value ?? {});
+
+  if (entries.length === 0) {
+    return (
+      <tr key={path}>
+        <td
+          colSpan={2}
+          className="px-4 py-3 text-sm text-primary-black/50 dark:text-primary-white/50"
+        >
+          No values recorded
+        </td>
+      </tr>
+    );
+  }
+
+  return entries.flatMap(([key, entry], index) => {
+    const label = Array.isArray(value)
+      ? `Entry ${index + 1}`
+      : formatCertificateLabel(key);
+    const rowPath = `${path}.${key}`;
+
+    if (entry !== null && typeof entry === "object") {
+      return [
+        <tr key={`${rowPath}-heading`}>
+          <th
+            colSpan={2}
+            className="bg-primary-black/5 px-4 py-3 text-left font-semibold text-primary-black dark:bg-primary-white/5 dark:text-primary-white"
+          >
+            {label}
+          </th>
+        </tr>,
+        ...renderCertificateRows(entry, rowPath),
+      ];
+    }
+
+    return (
+      <tr key={rowPath}>
+        <th
+          scope="row"
+          className="w-1/3 px-4 py-3 text-left align-top font-medium text-primary-black/70 dark:text-primary-white/70"
+        >
+          {label}
+        </th>
+        <td className="whitespace-pre-wrap wrap-break-word px-4 py-3 text-primary-black dark:text-primary-white">
+          {formatCertificateValue(entry)}
+        </td>
+      </tr>
+    );
+  });
 }
 
 export default function CertificateVerificationPage() {
@@ -32,9 +99,6 @@ export default function CertificateVerificationPage() {
   const [error, setError] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [usingMockData, setUsingMockData] = useState(false);
-  const visualExaminationResult =
-    selectedCertificate?.data?.visualExamination?.completeWeldResult ??
-    selectedCertificate?.data?.visual_examination?.complete_weld_result;
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -57,11 +121,15 @@ export default function CertificateVerificationPage() {
       let matches;
 
       if (isCertificateNo) {
-        const result = await getCertificatePreview(searchInput.trim());
+        const result = await certificateDataSource.getPreview(
+          searchInput.trim(),
+        );
         matches = result.certificate ? [result.certificate] : [];
         setUsingMockData(Boolean(result.isMockData));
       } else {
-        const result = await getCertificatesByWelderId(searchInput.trim());
+        const result = await certificateDataSource.getByWelderId(
+          searchInput.trim(),
+        );
         matches = result.certificates;
         setUsingMockData(Boolean(result.isMockData));
       }
@@ -94,7 +162,9 @@ export default function CertificateVerificationPage() {
     setError(null);
 
     try {
-      const response = await getCertificateDetail(cert.certificate_no);
+      const response = await certificateDataSource.getDetail(
+        cert.certificate_no,
+      );
 
       if (response.certificate) {
         if (
@@ -396,101 +466,27 @@ export default function CertificateVerificationPage() {
               <div className="space-y-8">
                 <div>
                   <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
-                    Basic Information
+                    Complete Certificate Record
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary-black/5 dark:bg-primary-white/5 p-6 rounded-lg">
-                    <div>
-                      <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                        Certificate Number
-                      </label>
-                      <p className="text-primary-black dark:text-primary-white font-medium">
-                        {selectedCertificate.certificate_no}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                        Welder Name
-                      </label>
-                      <p className="text-primary-black dark:text-primary-white font-medium">
-                        {selectedCertificate.welder_name}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                        Identification Number
-                      </label>
-                      <p className="text-primary-black dark:text-primary-white font-medium">
-                        {selectedCertificate.welder_identification_no}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                        Test Date
-                      </label>
-                      <p className="text-primary-black dark:text-primary-white font-medium">
-                        {new Date(
-                          selectedCertificate.test_date,
-                        ).toLocaleDateString()}
-                      </p>
-                    </div>
+                  <div className="overflow-x-auto border-y border-primary-black/10 dark:border-primary-white/10">
+                    <table className="w-full min-w-120 border-collapse text-sm">
+                      <tbody className="divide-y divide-primary-black/10 dark:divide-primary-white/10">
+                        {renderCertificateRows(
+                          Object.fromEntries(
+                            Object.entries(selectedCertificate).filter(
+                              ([key]) =>
+                                ![
+                                  "isPreview",
+                                  "isOwner",
+                                  "accessDenied",
+                                ].includes(key),
+                            ),
+                          ),
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-
-                {/* WPS Info */}
-                {(selectedCertificate.data?.wpsNo ||
-                  selectedCertificate.data?.wps_no) && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
-                      Welding Procedure Specification
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-primary-black/5 dark:bg-primary-white/5 p-6 rounded-lg">
-                      <div>
-                        <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                          WPS Number
-                        </label>
-                        <p className="text-primary-black dark:text-primary-white font-medium">
-                          {selectedCertificate.data.wpsNo ||
-                            selectedCertificate.data.wps_no}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-primary-black/60 dark:text-primary-white/60 uppercase tracking-wider mb-2 block">
-                          Revision
-                        </label>
-                        <p className="text-primary-black dark:text-primary-white font-medium">
-                          {selectedCertificate.data.wpsRevision ||
-                            selectedCertificate.data.wps_revision}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Test Results */}
-                {visualExaminationResult && (
-                  <div>
-                    <h3 className="text-lg font-semibold text-primary-black dark:text-primary-white mb-4">
-                      Test Results
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-4 bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
-                        <CheckCircle
-                          className="text-green-600 dark:text-green-400 shrink-0 mt-1"
-                          size={20}
-                        />
-                        <div>
-                          <p className="font-medium text-primary-black dark:text-primary-white">
-                            Visual Examination
-                          </p>
-                          <p className="text-sm text-primary-black/60 dark:text-primary-white/60 mt-1">
-                            {visualExaminationResult.charAt(0).toUpperCase() +
-                              visualExaminationResult.slice(1)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Back Button */}
                 <div className="pt-4 border-t border-primary-black/10 dark:border-primary-white/10">
